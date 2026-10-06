@@ -298,7 +298,7 @@ public class Token {
             throw new InvalidColorException();
     }
 
-    private String getAlgorithm() {
+    public String getAlgorithm() {
         return mAlgorithm == null ? "SHA1" : mAlgorithm;
     }
 
@@ -336,6 +336,14 @@ public class Token {
 
     public Type getType() {
         return mType;
+    }
+
+    public int getDigits() {
+        return mDigits == null ? Code.Factory.fromIssuer(mIssuer).getDigitsMin() : mDigits;
+    }
+
+    public Long getCounter() {
+        return mCounter;
     }
 
     public boolean getLock() {

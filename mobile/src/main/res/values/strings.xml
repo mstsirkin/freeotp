@@ -134,4 +134,12 @@
     <string name="keystore_image">keystore image</string>
     <string name="android_keystore_title">Android Keystore</string>
     <string name="menu_title">Menu</string>
+    <string name="token_info_title">Account information</string>
+    <string name="token_info_details">Issuer: %1$s\nAccount: %2$s\nType: %3$s\nAlgorithm: %4$s\nCode length: %5$d characters\nAuthentication required: %6$s</string>
+    <string name="token_info_totp">TOTP (time-based)</string>
+    <string name="token_info_hotp">HOTP (counter-based)</string>
+    <string name="token_info_period">\nPeriod: %1$d seconds</string>
+    <string name="token_info_counter">\nNext counter: %1$d</string>
+    <string name="token_info_yes">Yes</string>
+    <string name="token_info_no">No</string>
 </resources>

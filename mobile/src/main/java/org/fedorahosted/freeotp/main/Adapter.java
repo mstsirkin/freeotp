@@ -365,6 +365,11 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         return code;
     }
 
+    public Token getTokenInfo(int position) {
+        String uuid = mItems.get(position);
+        return Token.deserialize(mSharedPreferences.getString(uuid, null));
+    }
+
     public Pair<String, String> getLabel(int position) {
         String uuid = mItems.get(position);
         Token token = Token.deserialize(mSharedPreferences.getString(uuid, null));

@@ -452,6 +452,28 @@ public class Activity extends AppCompatActivity
                 mRecyclerView.scrollToPosition(mTokenAdapter.getSelected().first());
                 return true;
 
+            case R.id.action_token_info:
+                if (mTokenAdapter.getSelected().size() != 1)
+                    return true;
+                Token infoToken = mTokenAdapter.getTokenInfo(mTokenAdapter.getSelected().first());
+                String details = getString(R.string.token_info_details,
+                        infoToken.getIssuer() == null ? getString(R.string.unknown_issuer) : infoToken.getIssuer(),
+                        infoToken.getLabel(),
+                        getString(infoToken.getType() == Token.Type.TOTP
+                                ? R.string.token_info_totp : R.string.token_info_hotp),
+                        infoToken.getAlgorithm(), infoToken.getDigits(),
+                        getString(infoToken.getLock() ? R.string.token_info_yes : R.string.token_info_no));
+                if (infoToken.getType() == Token.Type.TOTP)
+                    details += getString(R.string.token_info_period, infoToken.getPeriod());
+                else
+                    details += getString(R.string.token_info_counter, infoToken.getCounter());
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.token_info_title)
+                        .setMessage(details)
+                        .setPositiveButton(R.string.close, null)
+                        .show();
+                return true;
+
             case R.id.action_edit:
                 int selected = mTokenAdapter.getSelected().first();
                 TokenIcon token_icon = mTokenAdapter.getTokenIcon(selected);
@@ -575,6 +597,11 @@ public class Activity extends AppCompatActivity
                     mi.setVisible(selected.size() > 0);
                     mi.setEnabled(!mTokenAdapter.isSelected(mTokenAdapter.getItemCount() - 1));
                     break;
+                case R.id.action_token_info:
+                    mi.setVisible(selected.size() > 0);
+                    mi.setEnabled(selected.size() == 1);
+                    break;
+
                 case R.id.action_edit:
                     mi.setVisible(selected.size() > 0);
                     break;
