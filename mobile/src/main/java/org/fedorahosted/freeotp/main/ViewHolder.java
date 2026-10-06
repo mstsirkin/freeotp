@@ -32,6 +32,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
         boolean onSelectionToggled(ViewHolder holder);
         void onActivated(ViewHolder holder);
         void onShare(String code);
+        boolean onStartupGenerationToggled(ViewHolder holder);
     }
     private static final String LOGTAG = "Adapter";
 
@@ -71,6 +73,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
     private TextView mIssuer;
     private TextView mLabel;
     private TextView mCode;
+    private CheckBox mStartupGeneration;
 
     private View mView;
 
@@ -207,6 +210,10 @@ class ViewHolder extends RecyclerView.ViewHolder {
         mShare = itemView.findViewById(R.id.share);
         mCode = itemView.findViewById(R.id.code);
         mView = itemView;
+        mStartupGeneration = itemView.findViewById(R.id.startup_generation);
+        mStartupGeneration.setOnClickListener(v -> mStartupGeneration.setChecked(
+                mEventListener.onStartupGenerationToggled(ViewHolder.this)));
+
 
         mCountdown.setInterpolator(new LinearInterpolator());
         mCountdown.setPropertyName("progress");
@@ -272,6 +279,20 @@ class ViewHolder extends RecyclerView.ViewHolder {
             // do not forget to reset this part to avoid issue
             fadeOut(0);
         }
+    }
+
+    void bindStartupGeneration(boolean enabled, boolean checked) {
+        mStartupGeneration.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        mStartupGeneration.setChecked(checked);
+        mStartupGeneration.setContentDescription(mView.getResources().getString(
+                R.string.startup_account_description, mIssuer.getText(), mLabel.getText()));
+        int space = enabled ? (int) (64 * mView.getResources().getDisplayMetrics().density) : 0;
+        ViewGroup.MarginLayoutParams shareParams = (ViewGroup.MarginLayoutParams) mShare.getLayoutParams();
+        shareParams.setMarginEnd(space);
+        mShare.setLayoutParams(shareParams);
+        ViewGroup.MarginLayoutParams lockParams = (ViewGroup.MarginLayoutParams) mLock.getLayoutParams();
+        lockParams.setMarginEnd(space + mView.getResources().getDimensionPixelSize(R.dimen.margin));
+        mLock.setLayoutParams(lockParams);
     }
 
     void displayCode(Code code) {

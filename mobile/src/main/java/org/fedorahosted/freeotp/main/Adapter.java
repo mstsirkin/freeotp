@@ -77,6 +77,7 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
     private TokenPersistence mTokenBackup;
 
     private final SharedPreferences mSharedPreferences;
+    private final SharedPreferences mStartupSettings;
     private final List<String> mItems;
     private final KeyStore mKeyStore;
     private Context mContext;
@@ -128,6 +129,7 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         setHasStableIds(true);
 
         mSharedPreferences = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
+        mStartupSettings = context.getSharedPreferences(Activity.SETTINGS, Context.MODE_PRIVATE);
         mKeyStore = KeyStore.getInstance("AndroidKeyStore");
         mKeyStore.load(null);
 
@@ -174,6 +176,8 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         Log.i(LOGTAG, String.format("Bind to view token [%s][%s]", token.getIssuer(), token.getLabel()));
         holder.bind(token, token_icon.mColor, image.first, image.second,
                 mActive.get(getItemId(position)), isSelected(position), token.getType());
+        holder.bindStartupGeneration(isStartupGenerationEnabled(),
+                mStartupSettings.getBoolean("startupAccount:" + uuid, false));
     }
 
     @Override
@@ -239,6 +243,7 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
             mTokenBackup.remove(uuid);
         }
 
+        mStartupSettings.edit().remove("startupAccount:" + uuid).apply();
         notifyItemRemoved(position);
         mKeyStore.deleteEntry(uuid);
     }
@@ -307,7 +312,42 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         }
     }
 
+    public boolean isStartupGenerationEnabled() {
+        return mStartupSettings.getBoolean(Activity.AUTO_GENERATE_STARTUP, false);
+    }
+
+    @Override
+    public boolean onStartupGenerationToggled(ViewHolder holder) {
+        int position = holder.getAdapterPosition();
+        if (position == RecyclerView.NO_POSITION)
+            return false;
+        String preference = "startupAccount:" + mItems.get(position);
+        boolean enabled = !mStartupSettings.getBoolean(preference, false);
+        mStartupSettings.edit().putBoolean(preference, enabled).apply();
+        return enabled;
+    }
+
+    public void generateStartupCodes() {
+        if (!isStartupGenerationEnabled())
+            return;
+        for (int position = 0; position < getItemCount(); position++) {
+            if (!mStartupSettings.getBoolean("startupAccount:" + mItems.get(position), false))
+                continue;
+            try {
+                getCode(position, false);
+            } catch (UserNotAuthenticatedException | KeyPermanentlyInvalidatedException e) {
+                // Preserve authentication requirements and the existing manual unlock flow.
+                Log.i(LOGTAG, "Startup generation skipped a protected account", e);
+            }
+        }
+    }
+
     public Code getCode(int position)
+            throws UserNotAuthenticatedException, KeyPermanentlyInvalidatedException {
+        return getCode(position, true);
+    }
+
+    private Code getCode(int position, boolean recordUsage)
             throws UserNotAuthenticatedException, KeyPermanentlyInvalidatedException {
         String uuid = mItems.get(position);
         Code code;
@@ -328,7 +368,8 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
             }
             Key key = mKeyStore.getKey(uuid, null);
             code = token.getCode(key);
-            token.setLastUsed(System.currentTimeMillis());
+            if (recordUsage)
+                token.setLastUsed(System.currentTimeMillis());
             mSharedPreferences.edit().putString(uuid, token.serialize()).apply();
         } catch (UserNotAuthenticatedException | KeyPermanentlyInvalidatedException e) {
             Log.e(LOGTAG, "Exception", e);

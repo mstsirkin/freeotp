@@ -142,4 +142,7 @@
     <string name="token_info_counter">\nNext counter: %1$d</string>
     <string name="token_info_yes">Yes</string>
     <string name="token_info_no">No</string>
+    <string name="auto_generate_startup">🤖 Generate codes on startup</string>
+    <string name="startup_account_description">Generate code on startup for %1$s, %2$s</string>
+    <string name="startup_generation_symbol" translatable="false">🤖</string>
 </resources>

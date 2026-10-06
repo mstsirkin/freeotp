@@ -92,6 +92,12 @@
                 android:visible="true"
                 app:showAsAction="always" />
             <item
+                android:id="@+id/action_generate_startup"
+                android:orderInCategory="100"
+                android:title="@string/auto_generate_startup"
+                android:checkable="true"
+                android:checked="false" />
+            <item
                 android:id="@+id/action_sort_mru"
                 android:orderInCategory="100"
                 android:icon="@drawable/ic_check_box_blank"

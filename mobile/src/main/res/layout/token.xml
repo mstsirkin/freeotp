@@ -195,4 +195,14 @@
     </RelativeLayout>
 
 
+    <CheckBox
+        android:id="@+id/startup_generation"
+        android:text="@string/startup_generation_symbol"
+        android:textSize="14sp"
+        android:layout_width="64dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end|center_vertical"
+        android:visibility="gone"
+        android:contentDescription="@string/auto_generate_startup" />
+
 </com.google.android.material.card.MaterialCardView>

@@ -110,6 +110,7 @@ public class Activity extends AppCompatActivity
     private SharedPreferences mSettings;
     static final String SETTINGS = "settings";
     static final String AUTO_COPY_CLIPBOARD = "copyClipboard";
+    public static final String AUTO_GENERATE_STARTUP = "autoGenerateStartup";
     public static final String SORT_BY_MRU = "sortByMostRecentlyUsed";
 
 
@@ -294,6 +295,8 @@ public class Activity extends AppCompatActivity
 
 
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
+        if (savedInstanceState == null)
+            mTokenAdapter.generateStartupCodes();
         mRecyclerView.setAdapter(mTokenAdapter);
         mRecyclerView.addItemDecoration(new GridLayoutItemDecoration(margin));
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -355,6 +358,8 @@ public class Activity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mMenu = menu;
+        menu.findItem(R.id.action_generate_startup).setChecked(
+                mSettings.getBoolean(AUTO_GENERATE_STARTUP, false));
         mAutoClipboard = menu.findItem(R.id.action_clipboard);
         /* Set checked/unchecked checkbox in menu for auto copy to clipboard setting */
         if(mSettings.getBoolean(AUTO_COPY_CLIPBOARD, false)) {
@@ -516,6 +521,13 @@ public class Activity extends AppCompatActivity
                             }
                         }).show();
 
+                return true;
+
+            case R.id.action_generate_startup:
+                boolean startupEnabled = !mSettings.getBoolean(AUTO_GENERATE_STARTUP, false);
+                mSettings.edit().putBoolean(AUTO_GENERATE_STARTUP, startupEnabled).apply();
+                item.setChecked(startupEnabled);
+                mTokenAdapter.notifyItemRangeChanged(0, mTokenAdapter.getItemCount());
                 return true;
 
             case R.id.action_clipboard:
