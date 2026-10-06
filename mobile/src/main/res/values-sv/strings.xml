@@ -19,7 +19,7 @@
    -->
 
 <resources>
-    <string name="app_name">FreeOTP</string>
+    <string name="app_name">FreeOTP Plus</string>
     <string name="app_welcome">Välkommen till FreeOTP 2.0</string>
 
     <!-- Buttons -->

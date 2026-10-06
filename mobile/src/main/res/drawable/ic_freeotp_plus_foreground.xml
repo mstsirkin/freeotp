@@ -1,0 +1,4 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@mipmap/ic_freeotp_foreground" />
+    <item android:drawable="@drawable/ic_plus_badge_adaptive" />
+</layer-list>

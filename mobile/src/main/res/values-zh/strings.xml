@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FreeOTP</string>
+    <string name="app_name">FreeOTP Plus</string>
     <string name="ok">确认</string>
     <string name="done">完成</string>
     <string name="close">关闭</string>

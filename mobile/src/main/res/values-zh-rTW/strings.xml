@@ -18,7 +18,7 @@
    - See the License for the specific language governing permissions and
    - limitations under the License.
    --><resources>
-    <string name="app_name">FreeOTP</string>
+    <string name="app_name">FreeOTP Plus</string>
     <string name="app_welcome">歡迎使用 FreeOTP 2.0</string>
     <!-- Buttons -->
     <string name="ok">確認</string>
