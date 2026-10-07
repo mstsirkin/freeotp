@@ -6,7 +6,7 @@
     <string name="close">关闭</string>
     <string name="save">保存</string>
     <string name="about">关于</string>
-    <string name="auto_copy_clipboard">自动复制到剪贴板</string>
+
     <string name="cancel">取消</string>
     <string name="delete">删除</string>
     <string name="move_up">上移</string>

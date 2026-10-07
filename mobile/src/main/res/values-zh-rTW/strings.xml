@@ -26,7 +26,7 @@
     <string name="close">關閉</string>
     <string name="save">儲存</string>
     <string name="about">關於</string>
-    <string name="auto_copy_clipboard">自動複製到剪貼簿</string>
+
     <string name="sort_by_recent_use">依最近使用排序</string>
     <string name="cancel">取消</string>
     <string name="delete">刪除</string>

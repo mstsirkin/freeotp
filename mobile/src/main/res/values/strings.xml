@@ -28,7 +28,7 @@
     <string name="close">Close</string>
     <string name="save">Save</string>
     <string name="about">About</string>
-    <string name="auto_copy_clipboard">Auto Clipboard</string>
+
     <string name="sort_by_recent_use">Sort by Recently Used</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
@@ -38,7 +38,6 @@
     <string name="unknown_issuer">Unknown Issuer</string>
     <string name="enable_lock_screen">Enable Lock Screen</string>
 
-    <string name="auto_copy_clipboard_toast">Automatic copy-to-clipboard: %1$s</string>
     <string name="sort_by_recent_use_toast">Sort by recent use: %1$s</string>
     <string name="state_enabled_toast">Enabled</string>
     <string name="state_disabled_toast">Disabled</string>
@@ -145,6 +144,7 @@
     <string name="auto_generate_startup">Generate codes on startup</string>
     <string name="startup_account_description">Generate code on startup for %1$s, %2$s</string>
     <string name="startup_generation_symbol" translatable="false">🤖</string>
+    <string name="share_settings_menu">⚙ Sharing settings ›</string>
     <string name="share_settings_title">Sharing settings</string>
     <string name="share_settings_back">Back</string>
     <string name="share_settings_jelling">Jelling</string>

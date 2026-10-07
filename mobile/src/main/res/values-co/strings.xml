@@ -35,7 +35,7 @@ Information about Corsican localization:
 	<string name="close">Chjode</string>
 	<string name="save">Arregistrà</string>
 	<string name="about">Apprupositu</string>
-	<string name="auto_copy_clipboard">Preme’papei autumaticu</string>
+
 	<string name="sort_by_recent_use">Ordinà da l’ultimu usu</string>
 	<string name="cancel">Abbandunà</string>
 	<string name="delete">Squassà</string>
@@ -45,7 +45,6 @@ Information about Corsican localization:
 	<string name="unknown_issuer">Emettidore scunnisciutu</string>
 	<string name="enable_lock_screen">Attivà l’ammarchjunata di u screnu</string>
 
-    <string name="auto_copy_clipboard_toast">Copia autumatica versu u preme’papei : %1$s</string>
     <string name="sort_by_recent_use_toast">Ordinà da l’ultimu usu : %1$s</string>
     <string name="state_enabled_toast">Attivatu</string>
     <string name="state_disabled_toast">Disattivatu</string>

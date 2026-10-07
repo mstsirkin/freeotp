@@ -70,3 +70,7 @@ Auto-share uses the existing enabled sharing methods whenever that account actua
 All translated app-facing names, welcome screens, backup prompts and About text use FreeOTP Plus. The in-app logo carries the same plus badge as the adaptive and legacy launcher icons. Upstream attribution and links are retained.
 
 The personal release is built with `-I tools/personal-release.gradle :mobile:assembleRelease` and the original key supplied through `TXT_BT_SIGNING_KEY`. It retains the installed personal app ID (`org.fedorahosted.freeotp.debug`) and signing identity so it updates that app without clearing accounts. The release is not debuggable; the `.debug` suffix preserves installation identity. Keep release outputs in a separate checkout to preserve debug artifacts.
+
+### Sharing menu cleanup (2.0.6-plus.5)
+
+The burger menu labels Sharing settings with a gear and navigation chevron. The legacy global Auto Clipboard entry and automatic-copy behavior are removed, including when an older installation saved that preference as enabled. Clipboard remains a sharing destination controlled in Sharing settings; per-account auto-share uses that same destination configuration.

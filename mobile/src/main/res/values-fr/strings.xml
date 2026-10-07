@@ -28,7 +28,7 @@
     <string name="close">Fermer</string>
     <string name="save">Sauvegarder</string>
     <string name="about">À propos</string>
-    <string name="auto_copy_clipboard">Presse-papier automatique</string>
+
     <string name="sort_by_recent_use">Trier par dernière utilisation</string>
     <string name="cancel">Annuler</string>
     <string name="delete">Supprimer</string>
@@ -38,7 +38,6 @@
     <string name="unknown_issuer">Fournisseur inconnu</string>
     <string name="enable_lock_screen">Activer le verrouillage de l\'écran</string>
 
-    <string name="auto_copy_clipboard_toast">Presse-papier automatique\u00A0: %1$s</string>
     <string name="sort_by_recent_use_toast">Trier par dernière utilisation\u00A0: %1$s</string>
     <string name="state_enabled_toast">activé</string>
     <string name="state_disabled_toast">désactivé</string>

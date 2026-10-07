@@ -22,8 +22,6 @@ package org.fedorahosted.freeotp.main;
 import android.Manifest;
 import android.app.KeyguardManager;
 import android.app.admin.DevicePolicyManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -96,7 +94,6 @@ public class Activity extends AppCompatActivity
     private Adapter mTokenAdapter;
     private TextView mEmpty;
     private Menu mMenu;
-    private MenuItem mAutoClipboard;
     private MenuItem mSortByMru;
     ActivityResultLauncher<Intent> mManualAddLauncher;
     ActivityResultLauncher<Intent> mBackupSaveLauncher;
@@ -130,7 +127,6 @@ public class Activity extends AppCompatActivity
     @Override protected void onPause() { mAutomationResumed = false; super.onPause(); }
     @Override protected void onDestroy() { mAutomationHandler.removeCallbacksAndMessages(null); super.onDestroy(); }
     static final String SETTINGS = "settings";
-    static final String AUTO_COPY_CLIPBOARD = "copyClipboard";
     public static final String AUTO_GENERATE_STARTUP = "autoGenerateStartup";
     public static final String SORT_BY_MRU = "sortByMostRecentlyUsed";
 
@@ -158,12 +154,6 @@ public class Activity extends AppCompatActivity
             Log.i(LOGTAG, "onActivate: adapter.getCode()");
             int position = vh.getAdapterPosition();
             Code code = mTokenAdapter.getCode(position);
-
-            if (mSettings.getBoolean(AUTO_COPY_CLIPBOARD, false)) {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("code", code.getCode());
-                clipboard.setPrimaryClip(clip);
-            }
 
             Log.i(LOGTAG, "onActivate: vh.displayCode()");
             vh.displayCode(code);
@@ -383,15 +373,6 @@ public class Activity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mMenu = menu;
-        mAutoClipboard = menu.findItem(R.id.action_clipboard);
-        /* Set checked/unchecked checkbox in menu for auto copy to clipboard setting */
-        if(mSettings.getBoolean(AUTO_COPY_CLIPBOARD, false)) {
-            mAutoClipboard.setIcon(R.drawable.ic_check_box_checked);
-        } else {
-            /* Should not be needed since this is the default, here as fallback */
-            mAutoClipboard.setIcon(R.drawable.ic_check_box_blank);
-        }
-
         mSortByMru = menu.findItem(R.id.action_sort_mru);
         /* Set checked/unchecked checkbox in menu for sort by MRU setting */
         if(mSettings.getBoolean(SORT_BY_MRU, false)) {
@@ -550,18 +531,6 @@ public class Activity extends AppCompatActivity
                 startActivity(new Intent(this, org.fedorahosted.freeotp.main.share.SharingSettingsActivity.class));
                 return true;
 
-            case R.id.action_clipboard:
-                boolean copy_clipboard = mSettings.getBoolean(AUTO_COPY_CLIPBOARD, false);
-
-                mSettings.edit().putBoolean(AUTO_COPY_CLIPBOARD, !copy_clipboard).apply();
-                UserNotifier.show(this, R.string.auto_copy_clipboard_toast, !copy_clipboard ? R.string.state_enabled_toast : R.string.state_disabled_toast);
-
-                /* Update checkbox icon in menu */
-                if(mAutoClipboard == null) return true;
-                mAutoClipboard.setIcon(!copy_clipboard ? R.drawable.ic_check_box_checked : R.drawable.ic_check_box_blank);
-
-                return true;
-
             case R.id.action_sort_mru:
                 boolean sortByMru = mSettings.getBoolean(SORT_BY_MRU, false);
 
@@ -618,7 +587,6 @@ public class Activity extends AppCompatActivity
                     break;
                 case R.id.action_backup:
                 case R.id.action_restore:
-                case R.id.action_clipboard:
 
                 case R.id.action_up:
                     mi.setVisible(selected.size() > 0);
