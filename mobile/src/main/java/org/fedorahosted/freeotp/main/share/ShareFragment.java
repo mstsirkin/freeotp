@@ -45,10 +45,11 @@ public class ShareFragment extends BottomSheetDialogFragment implements Discover
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mCode = getArguments().getString(CODE_ID);
-        mDiscoverables = new Discoverable[] {
-                new Clipboard(getContext(), this),
-                new Jelling(getContext(), this),
-        };
+        java.util.ArrayList<Discoverable> transports = new java.util.ArrayList<>();
+        transports.add(new Clipboard(getContext(), this));
+        if (SharingSettings.jellingEnabled(getContext())) transports.add(new Jelling(getContext(), this));
+        if (SharingSettings.keyboardEnabled(getContext())) transports.add(new Keyboard(getContext(), this));
+        mDiscoverables = transports.toArray(new Discoverable[0]);
 
         View v = View.inflate(getContext(), R.layout.fragment_share, null);
 

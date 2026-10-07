@@ -145,4 +145,14 @@
     <string name="auto_generate_startup">🤖 Generate codes on startup</string>
     <string name="startup_account_description">Generate code on startup for %1$s, %2$s</string>
     <string name="startup_generation_symbol" translatable="false">🤖</string>
+    <string name="share_settings_title">Sharing settings</string>
+    <string name="share_settings_back">Back</string>
+    <string name="share_settings_jelling">Jelling</string>
+    <string name="share_settings_keyboard">Bluetooth keyboard</string>
+    <string name="share_settings_manage">Manage keyboard destinations</string>
+    <string name="share_keyboard_title">Send as keyboard</string>
+    <string name="share_keyboard_subtitle">Bluetooth keyboard</string>
+    <string name="share_keyboard_unavailable">Bluetooth keyboard sending requires Android 9 or later.</string>
+    <string name="share_jelling_find_receiver">Find Jelling receiver</string>
+    <string name="share_jelling_finding_receivers">Searching for Jelling receivers</string>
 </resources>

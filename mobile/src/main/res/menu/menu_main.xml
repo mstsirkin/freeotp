@@ -97,6 +97,7 @@
                 android:title="@string/auto_generate_startup"
                 android:checkable="true"
                 android:checked="false" />
+            <item android:id="@+id/action_sharing_settings" android:title="@string/share_settings_title" />
             <item
                 android:id="@+id/action_sort_mru"
                 android:orderInCategory="100"

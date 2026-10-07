@@ -523,6 +523,10 @@ public class Activity extends AppCompatActivity
 
                 return true;
 
+            case R.id.action_sharing_settings:
+                startActivity(new Intent(this, org.fedorahosted.freeotp.main.share.SharingSettingsActivity.class));
+                return true;
+
             case R.id.action_generate_startup:
                 boolean startupEnabled = !mSettings.getBoolean(AUTO_GENERATE_STARTUP, false);
                 mSettings.edit().putBoolean(AUTO_GENERATE_STARTUP, startupEnabled).apply();

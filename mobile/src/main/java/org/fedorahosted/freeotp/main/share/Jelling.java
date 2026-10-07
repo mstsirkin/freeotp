@@ -323,7 +323,7 @@ class Jelling extends Discoverable {
         super(context, discoveryCallback);
 
         mBluetoothItem.setSubtitle(mContext.getResources().getString(R.string.share_jelling_bluetooth_devices));
-        mBluetoothItem.setTitle(mContext.getResources().getString(R.string.share_jelling_scan_for));
+        mBluetoothItem.setTitle(mContext.getResources().getString(R.string.share_jelling_find_receiver));
         mBluetoothItem.setImage(R.drawable.ic_bluetooth);
         mBluetoothItem.setPriority(102);
         if (supported())
@@ -370,7 +370,7 @@ class Jelling extends Discoverable {
         mScanning = true;
 
         post(() -> {
-            mBluetoothItem.setTitle(mContext.getResources().getString(R.string.share_jelling_scanning_for));
+            mBluetoothItem.setTitle(mContext.getResources().getString(R.string.share_jelling_finding_receivers));
             mBluetoothItem.setOnClickListener(null);
         });
     }
@@ -394,7 +394,7 @@ class Jelling extends Discoverable {
         if (mBluetoothGatt != null)
             mBluetoothGatt.disconnect();
 
-        mBluetoothItem.setTitle(mContext.getResources().getString(R.string.share_jelling_scan_for));
+        mBluetoothItem.setTitle(mContext.getResources().getString(R.string.share_jelling_find_receiver));
         disappear(mBluetoothItem);
         appear(mBluetoothItem, null);
     }

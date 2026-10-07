@@ -44,3 +44,13 @@ Here are some open-source alternative apps providing similar functionality:
 - [Aegis](https://github.com/beemdevelopment/Aegis)
 - [FreeOTP+](https://github.com/helloworld1/FreeOTPPlus)
 - [Proton Authenticator](https://github.com/protonpass/android-authenticator)
+
+## FreeOTP Plus Bluetooth sharing
+
+The share panel offers Clipboard, Jelling, and **Send as keyboard**. **Sharing settings** in the burger menu enables or disables Jelling and Bluetooth keyboard independently; clipboard is always available. Both Bluetooth methods are enabled by default, with keyboard hidden on Android versions before 9. Disabled methods are not constructed and do not request their transport permissions.
+
+**Manage keyboard destinations** opens the device screen reused from TXT to BT: select a remembered destination, add a device by finding a visible computer or making the phone visible, and filter known accessories. Show all devices and diagnostics are in the overflow menu. Keyboard sharing launches this private foreground screen with the displayed code and sends once to the selected device; without a destination, select or pair one first. It does not regenerate a code or advance HOTP. The keyboard classes are built into FreeOTP Plus; no companion Android app is needed.
+
+Keep the keyboard screen visible during sending. Numbers are normally unaffected by letter-language changes, while letters and symbols require US English with Caps Lock off. Linux must authorize keyboard access and trust the phone for incoming reconnections. Failures preserve the code for manual retry; partial sends are not retried automatically.
+
+The APK also includes the earlier HOTP backup-counter fix (separate commit). Physical phone/computer testing remains required for this integration. The standalone keyboard regression checks can be compiled with KeyboardCodec.java and KeyboardReports.java and run as KeyboardCodecTest / KeyboardReportsTest.
