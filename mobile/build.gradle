@@ -7,8 +7,8 @@ android {
         applicationId "org.fedorahosted.freeotp"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 49
-        versionName "2.0.6-plus.1"
+        versionCode 50
+        versionName "2.0.6-plus.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
         multiDexEnabled = true

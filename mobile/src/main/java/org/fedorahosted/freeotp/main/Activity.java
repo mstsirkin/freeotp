@@ -260,12 +260,7 @@ public class Activity extends AppCompatActivity
 
                 @Override
                 public void onShare(String code) {
-                    Bundle b = new Bundle();
-                    b.putString(ShareFragment.CODE_ID, code);
-
-                    ShareFragment sf = new ShareFragment();
-                    sf.setArguments(b);
-                    sf.show(getSupportFragmentManager(), sf.getTag());
+                    org.fedorahosted.freeotp.main.share.ShareActions.share(Activity.this, code);
                 }
             };
         } catch (GeneralSecurityException | IOException e) {

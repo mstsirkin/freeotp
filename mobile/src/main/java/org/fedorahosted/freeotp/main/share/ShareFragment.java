@@ -36,6 +36,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ShareFragment extends BottomSheetDialogFragment implements Discoverable.DiscoveryCallback {
     public static final String CODE_ID = "CODE";
+    public static final String DIRECT_JELLING = "DIRECT_JELLING";
+    private boolean mDirectJelling, mSending, mDiscoveryWindowComplete;
+    private final android.os.Handler mHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final java.util.Map<Adapter.Item, Discoverable.Shareable> mReceivers = new java.util.LinkedHashMap<>();
+    private final Runnable mChooseReceiver = () -> {
+        mDiscoveryWindowComplete = true;
+        if (!isAdded() || mSending) return;
+        if (mReceivers.size() == 1) sendReceiver(mReceivers.values().iterator().next());
+        else if (mReceivers.isEmpty()) android.widget.Toast.makeText(getContext(), R.string.share_jelling_no_receivers, android.widget.Toast.LENGTH_LONG).show();
+    };
+    private void sendReceiver(Discoverable.Shareable receiver) {
+        if (mSending) return;
+        mSending = true;
+        mHandler.removeCallbacks(mChooseReceiver);
+        for (int i=0; i<mShareTokenAdapter.getItemCount(); i++) mShareTokenAdapter.get(i).setEnabled(false);
+        receiver.share(mCode, success -> {
+            if (!isAdded()) return;
+            android.widget.Toast.makeText(getContext(), success?R.string.share_jelling_sent:R.string.share_jelling_failed, android.widget.Toast.LENGTH_LONG).show();
+            dismissAllowingStateLoss();
+        });
+    }
 
     private final Adapter mShareTokenAdapter = new Adapter();
     private Discoverable[] mDiscoverables;
@@ -45,10 +66,15 @@ public class ShareFragment extends BottomSheetDialogFragment implements Discover
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mCode = getArguments().getString(CODE_ID);
+        mDirectJelling = getArguments().getBoolean(DIRECT_JELLING, false);
+        if (savedInstanceState != null && savedInstanceState.getBoolean("sending", false)) {
+            // Delivery may have occurred before recreation; never automatically resend.
+            mSending = true;
+        }
         java.util.ArrayList<Discoverable> transports = new java.util.ArrayList<>();
-        transports.add(new Clipboard(getContext(), this));
+        if (!mDirectJelling && SharingSettings.clipboardEnabled(getContext())) transports.add(new Clipboard(getContext(), this));
         if (SharingSettings.jellingEnabled(getContext())) transports.add(new Jelling(getContext(), this));
-        if (SharingSettings.keyboardEnabled(getContext())) transports.add(new Keyboard(getContext(), this));
+        if (!mDirectJelling && SharingSettings.keyboardEnabled(getContext())) transports.add(new Keyboard(getContext(), this));
         mDiscoverables = transports.toArray(new Discoverable[0]);
 
         View v = View.inflate(getContext(), R.layout.fragment_share, null);
@@ -63,6 +89,12 @@ public class ShareFragment extends BottomSheetDialogFragment implements Discover
     @Override
     public void onStart() {
         super.onStart();
+        if (mDirectJelling) {
+            if (mSending) { dismissAllowingStateLoss(); return; }
+            for (Discoverable transport : mDiscoverables) {
+                if (!transport.permitted()) requestPermissions(transport.permissions(), 0);
+            }
+        }
 
         for (Discoverable d : mDiscoverables) {
             if (d.permissions().length == 0)
@@ -96,14 +128,21 @@ public class ShareFragment extends BottomSheetDialogFragment implements Discover
                 continue;
 
             Intent intent = d.enablement();
-            if (intent == null)
+            if (intent == null) {
                 d.startDiscovery();
+                if (mDirectJelling && !mSending && !mDiscoveryWindowComplete) {
+                    mHandler.removeCallbacks(mChooseReceiver);
+                    mHandler.postDelayed(mChooseReceiver, 6000);
+                }
+            }
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        mHandler.removeCallbacks(mChooseReceiver);
+        mDiscoveryWindowComplete=false;
 
         for (Discoverable d : mDiscoverables) {
             if (d.isDiscovering())
@@ -114,6 +153,27 @@ public class ShareFragment extends BottomSheetDialogFragment implements Discover
     @Override
     public void onShareAppeared(final Discoverable discoverable, final Adapter.Item item,
                                 final Discoverable.Shareable shareable) {
+        if (!isAdded()) return;
+        if (mDirectJelling) {
+            if (mSending) return;
+            if (shareable == null) {
+                item.setTitle(getString(R.string.share_jelling_finding_receivers));
+                item.setSubtitle(getString(R.string.share_jelling_receiver_hint));
+                item.setOnClickListener(ignored -> {
+                    if (!discoverable.permitted()) requestPermissions(discoverable.permissions(), 0);
+                    else { mDiscoveryWindowComplete=false; onRequestPermissionsResult(0, new String[0], new int[0]); }
+                });
+            } else {
+                mReceivers.put(item, shareable);
+                item.setOnClickListener(ignored -> sendReceiver(shareable));
+                if (mDiscoveryWindowComplete && mReceivers.size()==1) {
+                    mDiscoveryWindowComplete=false;
+                    mHandler.postDelayed(mChooseReceiver, 2000);
+                }
+            }
+            mShareTokenAdapter.add(item);
+            return;
+        }
         if (shareable == null) {
             item.setOnClickListener(new Adapter.Item.OnClickListener() {
                 @Override
@@ -142,8 +202,13 @@ public class ShareFragment extends BottomSheetDialogFragment implements Discover
         mShareTokenAdapter.add(item);
     }
 
+    @Override public void onSaveInstanceState(@NonNull Bundle state) {
+        super.onSaveInstanceState(state); state.putBoolean("sending", mSending);
+    }
+
     @Override
     public void onShareDisappeared(Discoverable discoverable, final Adapter.Item item) {
+        mReceivers.remove(item);
         mShareTokenAdapter.remove(item);
     }
 }

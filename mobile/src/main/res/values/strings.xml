@@ -155,4 +155,11 @@
     <string name="share_keyboard_unavailable">Bluetooth keyboard sending requires Android 9 or later.</string>
     <string name="share_jelling_find_receiver">Find Jelling receiver</string>
     <string name="share_jelling_finding_receivers">Searching for Jelling receivers</string>
+    <string name="share_settings_clipboard">Copy to clipboard</string>
+    <string name="share_code_copied">Code copied</string>
+    <string name="share_none_enabled">Enable a sharing method in Sharing settings.</string>
+    <string name="share_jelling_receiver_hint">Choose a receiver if more than one is found.</string>
+    <string name="share_jelling_no_receivers">No Jelling receiver found. Keep the receiver running on your computer.</string>
+    <string name="share_jelling_sent">Code sent</string>
+    <string name="share_jelling_failed">Sending failed. Check for partial input before trying again.</string>
 </resources>
