@@ -16,7 +16,7 @@ public final class SharingSettingsActivity extends Activity {
         LinearLayout body=new LinearLayout(this); body.setOrientation(LinearLayout.VERTICAL); body.setPadding(dp(20),dp(20),dp(20),dp(20));
         body.setOnApplyWindowInsetsListener((view,insets)->{ body.setPadding(dp(20),dp(20)+insets.getSystemWindowInsetTop(),dp(20),dp(20)+insets.getSystemWindowInsetBottom()); return insets; });
         LinearLayout header=new LinearLayout(this); header.setGravity(Gravity.CENTER_VERTICAL);
-        Button back=new Button(this); back.setText("‹"); back.setContentDescription(getString(R.string.share_settings_back)); back.setOnClickListener(view->finish()); header.addView(back,new LinearLayout.LayoutParams(dp(48),dp(48)));
+        Button back=new Button(this); back.setText("◀"); back.setContentDescription(getString(R.string.share_settings_back)); back.setOnClickListener(view->finish()); header.addView(back,new LinearLayout.LayoutParams(dp(48),dp(48)));
         TextView title=new TextView(this); title.setText(R.string.share_settings_title); title.setTextSize(22); header.addView(title); body.addView(header);
         Switch clipboard=new Switch(this); clipboard.setText(R.string.share_settings_clipboard); clipboard.setTextSize(17); clipboard.setPadding(0,dp(16),0,dp(16)); clipboard.setChecked(SharingSettings.clipboardEnabled(this)); body.addView(clipboard);
         clipboard.setOnCheckedChangeListener((button,enabled)->SharingSettings.preferences(this).edit().putBoolean("clipboard",enabled).apply());

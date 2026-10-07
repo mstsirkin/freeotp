@@ -144,8 +144,8 @@
     <string name="auto_generate_startup">Generate codes on startup</string>
     <string name="startup_account_description">Generate code on startup for %1$s, %2$s</string>
     <string name="startup_generation_symbol" translatable="false">🤖</string>
-    <string name="share_settings_menu">⚙ Sharing settings ›</string>
-    <string name="share_settings_title">Sharing settings</string>
+    <string name="share_settings_menu">⚙ Advanced settings ▶</string>
+    <string name="share_settings_title">Advanced settings</string>
     <string name="share_settings_back">Back</string>
     <string name="share_settings_jelling">Jelling</string>
     <string name="share_settings_keyboard">Bluetooth keyboard</string>
@@ -165,4 +165,6 @@
     <string name="automation_title">Account automation</string>
     <string name="auto_share_generated">Auto-share generated codes</string>
     <string name="auto_share_account_description">Auto-share generated codes for %1$s, %2$s</string>
+    <string name="startup_account_control">🤖 Generate on startup</string>
+    <string name="auto_share_account_control">Share automatically</string>
 </resources>

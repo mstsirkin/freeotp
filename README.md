@@ -74,3 +74,5 @@ The personal release is built with `-I tools/personal-release.gradle :mobile:ass
 ### Sharing menu cleanup (2.0.6-plus.5)
 
 The burger menu labels Sharing settings with a gear and navigation chevron. The legacy global Auto Clipboard entry and automatic-copy behavior are removed, including when an older installation saved that preference as enabled. Clipboard remains a sharing destination controlled in Sharing settings; per-account auto-share uses that same destination configuration.
+
+The settings entry is named Advanced settings with a right-pointing triangle; its back button uses the matching left-pointing triangle. Per-account controls have full text labels, a robot emoji for startup generation and the existing share graphic for automatic sharing, tinted for the current theme. They are stacked to remain readable on narrow screens and with larger text.
