@@ -84,3 +84,7 @@ Every account always shows one compact row: robot (generate on startup), keyboar
 Manual accounts may share destinations. Among startup-enabled accounts, each destination belongs to one account. Enabling startup generation or changing the destination of a startup-enabled account keeps the latest configuration and disables startup generation on conflicting accounts, preserving their destinations and showing an explanatory toast. Multiple accounts with no destination may generate at startup. Checkbox changes never generate a code or advance HOTP.
 
 On upgrade, previously enabled startup selections are preserved; selections hidden behind a disabled legacy global switch remain disabled. The old chooser-based automatic sharing has no explicit destination and is cleared so the user can choose one in the new row. Clipboard startup delivery runs first; keyboard and Jelling foreground sessions are queued, with expired queued codes discarded without regeneration. Physical testing remains required.
+
+### Enter after keyboard send (2.0.6-plus.7)
+
+Advanced settings includes a global **Enter after keyboard send** switch, enabled by default for new and existing installations. Every keyboard send appends one Enter key press and release after the code; clipboard and Jelling are unchanged. The setting is captured when a send starts. Completion occurs only after the final Enter release, and a failed or interrupted code does not send the trailing Enter.

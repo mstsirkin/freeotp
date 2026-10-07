@@ -22,9 +22,11 @@ public final class SharingSettingsActivity extends Activity {
         clipboard.setOnCheckedChangeListener((button,enabled)->SharingSettings.preferences(this).edit().putBoolean("clipboard",enabled).apply());
         Switch jelling=new Switch(this); jelling.setText(R.string.share_settings_jelling); jelling.setTextSize(17); jelling.setPadding(0,dp(16),0,dp(16)); jelling.setChecked(SharingSettings.jellingEnabled(this)); body.addView(jelling);
         Switch keyboard=new Switch(this); keyboard.setText(R.string.share_settings_keyboard); keyboard.setTextSize(17); keyboard.setPadding(0,dp(16),0,dp(16)); keyboard.setChecked(SharingSettings.keyboardEnabled(this)); keyboard.setEnabled(Build.VERSION.SDK_INT>=28); body.addView(keyboard);
+        Switch enter=new Switch(this); enter.setText(R.string.share_settings_keyboard_enter); enter.setTextSize(17); enter.setPadding(0,dp(16),0,dp(16)); enter.setChecked(SharingSettings.keyboardEnterEnabled(this)); enter.setEnabled(SharingSettings.keyboardEnabled(this)); body.addView(enter);
+        enter.setOnCheckedChangeListener((button,enabled)->SharingSettings.preferences(this).edit().putBoolean("keyboardEnter",enabled).apply());
         Button manage=new Button(this); manage.setText(R.string.share_settings_manage); manage.setAllCaps(false); manage.setEnabled(SharingSettings.keyboardEnabled(this)); manage.setOnClickListener(view->startActivity(new Intent(this,KeyboardActivity.class))); body.addView(manage);
         jelling.setOnCheckedChangeListener((button,enabled)->SharingSettings.preferences(this).edit().putBoolean("jelling",enabled).apply());
-        keyboard.setOnCheckedChangeListener((button,enabled)->{ SharingSettings.preferences(this).edit().putBoolean("keyboard",enabled).apply(); manage.setEnabled(enabled); });
+        keyboard.setOnCheckedChangeListener((button,enabled)->{ SharingSettings.preferences(this).edit().putBoolean("keyboard",enabled).apply(); manage.setEnabled(enabled); enter.setEnabled(enabled); });
         if(Build.VERSION.SDK_INT<28) { TextView note=new TextView(this); note.setText(R.string.share_keyboard_unavailable); body.addView(note); }
         ScrollView scroll=new ScrollView(this); scroll.addView(body); setContentView(scroll);
     }

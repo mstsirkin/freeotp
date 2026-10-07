@@ -149,6 +149,7 @@
     <string name="share_settings_back">Back</string>
     <string name="share_settings_jelling">Jelling</string>
     <string name="share_settings_keyboard">Bluetooth keyboard</string>
+    <string name="share_settings_keyboard_enter">Enter after keyboard send</string>
     <string name="share_settings_manage">Manage keyboard destinations</string>
     <string name="share_keyboard_title">Send as keyboard</string>
     <string name="share_keyboard_subtitle">Bluetooth keyboard</string>

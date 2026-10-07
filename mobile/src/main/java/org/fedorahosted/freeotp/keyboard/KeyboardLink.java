@@ -2,6 +2,7 @@ package org.fedorahosted.freeotp.keyboard;
 
 import android.bluetooth.*;
 import android.content.Context;
+import org.fedorahosted.freeotp.main.share.SharingSettings;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -45,7 +46,7 @@ public final class KeyboardLink implements BluetoothProfile.ServiceListener {
         events.addLast(SystemClock.elapsedRealtime()+" " + value);
     }
     public String diagnostics() {
-        StringBuilder result=new StringBuilder("FreeOTP Plus keyboard 2.0.6-plus.6\nAndroid API "+android.os.Build.VERSION.SDK_INT+"\n");
+        StringBuilder result=new StringBuilder("FreeOTP Plus keyboard 2.0.6-plus.7\nAndroid API "+android.os.Build.VERSION.SDK_INT+"\n");
         for(String event:events) result.append(event).append('\n');
         return result.toString(); // No text, key values, or Bluetooth addresses.
     }
@@ -68,6 +69,7 @@ public final class KeyboardLink implements BluetoothProfile.ServiceListener {
     public void send(BluetoothDevice device, String text) {
         if (busy || closed) return;
         text = KeyboardCodec.normalize(text);
+        if (SharingSettings.keyboardEnterEnabled(context)) text += "\n";
         KeyboardCodec.validate(text);
         if(hid!=null && target!=null && !target.equals(device)) hid.disconnect(target);
         target=device; pending=text; busy=true; position=0; reports=0; typing=false; settling=false;

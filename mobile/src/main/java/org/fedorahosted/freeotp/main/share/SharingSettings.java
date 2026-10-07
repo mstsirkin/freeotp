@@ -27,5 +27,6 @@ public final class SharingSettings {
     public static SharedPreferences preferences(Context context) { return context.getSharedPreferences("share_transports",Context.MODE_PRIVATE); }
     public static boolean clipboardEnabled(Context context) { return preferences(context).getBoolean("clipboard",true); }
     public static boolean jellingEnabled(Context context) { return preferences(context).getBoolean("jelling",true); }
+    public static boolean keyboardEnterEnabled(Context context) { return preferences(context).getBoolean("keyboardEnter",true); }
     public static boolean keyboardEnabled(Context context) { return Build.VERSION.SDK_INT>=28 && preferences(context).getBoolean("keyboard",true); }
 }
