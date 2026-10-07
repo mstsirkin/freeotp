@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.fedorahosted.freeotp.main.share.ShareRoute;
 import org.fedorahosted.freeotp.Code;
 import org.fedorahosted.freeotp.R;
 import org.fedorahosted.freeotp.Token;
@@ -49,9 +50,9 @@ class ViewHolder extends RecyclerView.ViewHolder {
     interface EventListener {
         boolean onSelectionToggled(ViewHolder holder);
         void onActivated(ViewHolder holder);
-        void onShare(String code);
+        void onShare(ViewHolder holder, String code);
         boolean onStartupGenerationToggled(ViewHolder holder);
-        boolean onAutoShareToggled(ViewHolder holder);
+        void onDestinationToggled(ViewHolder holder, ShareRoute route);
     }
     private static final String LOGTAG = "Adapter";
 
@@ -74,7 +75,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
     private TextView mIssuer;
     private TextView mLabel;
     private TextView mCode;
-    private CheckBox mStartupGeneration, mAutoShare;
+    private CheckBox mStartupGeneration, mKeyboard, mClipboard, mJelling;
     private View mAutomationControls;
 
     private View mView;
@@ -213,9 +214,13 @@ class ViewHolder extends RecyclerView.ViewHolder {
         mCode = itemView.findViewById(R.id.code);
         mView = itemView;
         mStartupGeneration = itemView.findViewById(R.id.startup_generation);
-        mAutoShare = itemView.findViewById(R.id.auto_share);
+        mKeyboard = itemView.findViewById(R.id.destination_keyboard);
+        mClipboard = itemView.findViewById(R.id.destination_clipboard);
+        mJelling = itemView.findViewById(R.id.destination_jelling);
         mAutomationControls = itemView.findViewById(R.id.automation_controls);
-        mAutoShare.setOnClickListener(v -> mAutoShare.setChecked(mEventListener.onAutoShareToggled(ViewHolder.this)));
+        mKeyboard.setOnClickListener(v -> mEventListener.onDestinationToggled(this, ShareRoute.KEYBOARD));
+        mClipboard.setOnClickListener(v -> mEventListener.onDestinationToggled(this, ShareRoute.CLIPBOARD));
+        mJelling.setOnClickListener(v -> mEventListener.onDestinationToggled(this, ShareRoute.JELLING));
         mStartupGeneration.setOnClickListener(v -> mStartupGeneration.setChecked(
                 mEventListener.onStartupGenerationToggled(ViewHolder.this)));
 
@@ -230,7 +235,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
 
         mShare.setOnClickListener(v -> {
             String code = mCode.getText().toString();
-            mEventListener.onShare(code.replaceAll("\\s+", ""));
+            mEventListener.onShare(this, code.replaceAll("\\s+", ""));
         });
 
         mView.setOnClickListener(v -> {
@@ -286,19 +291,19 @@ class ViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    void bindAutomation(boolean generationEnabled, boolean generationChecked, boolean shareEnabled, boolean shareChecked) {
-        mAutomationControls.setVisibility(generationEnabled || shareEnabled ? View.VISIBLE : View.GONE);
-        mStartupGeneration.setVisibility(generationEnabled ? View.VISIBLE : View.GONE);
-        mStartupGeneration.setChecked(generationChecked);
-        mAutoShare.setVisibility(shareEnabled ? View.VISIBLE : View.GONE);
-        mAutoShare.setChecked(shareChecked);
-        mStartupGeneration.setContentDescription(mView.getResources().getString(
-                R.string.startup_account_description, mIssuer.getText(), mLabel.getText()));
-        mAutoShare.setContentDescription(mView.getResources().getString(
-                R.string.auto_share_account_description, mIssuer.getText(), mLabel.getText()));
-        if (android.os.Build.VERSION.SDK_INT >= 26) {
-            mStartupGeneration.setTooltipText(mView.getResources().getString(R.string.auto_generate_startup));
-            mAutoShare.setTooltipText(mView.getResources().getString(R.string.auto_share_generated));
+    void bindAutomation(boolean startup, ShareRoute destination) {
+        mAutomationControls.setVisibility(View.VISIBLE);
+        mStartupGeneration.setChecked(startup);
+        mKeyboard.setChecked(destination == ShareRoute.KEYBOARD); mKeyboard.setEnabled(android.os.Build.VERSION.SDK_INT >= 28);
+        mClipboard.setChecked(destination == ShareRoute.CLIPBOARD); mClipboard.setEnabled(true);
+        mJelling.setChecked(destination == ShareRoute.JELLING); mJelling.setEnabled(true);
+        CheckBox[] controls = {mStartupGeneration, mKeyboard, mClipboard, mJelling};
+        int[] labels = {R.string.auto_generate_startup, R.string.share_settings_keyboard,
+                R.string.share_settings_clipboard, R.string.share_settings_jelling};
+        for (int i = 0; i < controls.length; i++) {
+            String label = mView.getResources().getString(labels[i]);
+            controls[i].setContentDescription(label + ": " + mIssuer.getText() + " " + mLabel.getText());
+            if (android.os.Build.VERSION.SDK_INT >= 26) controls[i].setTooltipText(label);
         }
     }
 

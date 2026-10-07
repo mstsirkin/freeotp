@@ -26,9 +26,11 @@
     card_view:cardCornerRadius="4dp">
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-        <LinearLayout android:id="@+id/automation_controls" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
-            <CheckBox android:id="@+id/startup_generation" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/startup_account_control" android:textSize="14sp" android:paddingStart="8dp" android:paddingEnd="12dp" android:visibility="gone" android:contentDescription="@string/auto_generate_startup" />
-            <CheckBox android:id="@+id/auto_share" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/auto_share_account_control" android:textSize="14sp" android:drawableEnd="@drawable/ic_share_control" android:paddingStart="8dp" android:paddingEnd="12dp" android:visibility="gone" android:contentDescription="@string/auto_share_generated" />
+        <LinearLayout android:id="@+id/automation_controls" android:layout_width="match_parent" android:layout_height="48dp" android:gravity="end|center_vertical" android:orientation="horizontal">
+            <CheckBox android:id="@+id/startup_generation" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="🤖" android:textSize="20sp" android:paddingEnd="4dp" android:contentDescription="@string/auto_generate_startup" />
+            <CheckBox android:id="@+id/destination_keyboard" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="⌨" android:textSize="20sp" android:paddingEnd="4dp" android:contentDescription="@string/share_settings_keyboard" />
+            <CheckBox android:id="@+id/destination_clipboard" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="📋" android:textSize="20sp" android:paddingEnd="4dp" android:contentDescription="@string/share_settings_clipboard" />
+            <CheckBox android:id="@+id/destination_jelling" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="📡" android:textSize="20sp" android:paddingEnd="4dp" android:contentDescription="@string/share_settings_jelling" />
         </LinearLayout>
         <FrameLayout android:layout_width="match_parent" android:layout_height="72dp">
     <RelativeLayout

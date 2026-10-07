@@ -167,4 +167,6 @@
     <string name="auto_share_account_description">Auto-share generated codes for %1$s, %2$s</string>
     <string name="startup_account_control">🤖 Generate on startup</string>
     <string name="auto_share_account_control">Share automatically</string>
+    <string name="startup_destination_conflict">Startup generation disabled for %1$s: another account uses the same destination.</string>
+    <string name="share_destination_disabled">This sharing destination is disabled in Advanced settings.</string>
 </resources>

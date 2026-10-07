@@ -76,3 +76,11 @@ The personal release is built with `-I tools/personal-release.gradle :mobile:ass
 The burger menu labels Sharing settings with a gear and navigation chevron. The legacy global Auto Clipboard entry and automatic-copy behavior are removed, including when an older installation saved that preference as enabled. Clipboard remains a sharing destination controlled in Sharing settings; per-account auto-share uses that same destination configuration.
 
 The settings entry is named Advanced settings with a right-pointing triangle; its back button uses the matching left-pointing triangle. Per-account controls have full text labels, a robot emoji for startup generation and the existing share graphic for automatic sharing, tinted for the current theme. They are stacked to remain readable on narrow screens and with larger text.
+
+### Per-account destinations (2.0.6-plus.6)
+
+Every account always shows one compact row: robot (generate on startup), keyboard, clipboard, and antenna (Jelling). Select one destination or none; tap the selected destination to clear it. An account with a destination sends each newly generated code there, both on tap and on startup. The Share button reuses that destination; with none selected, it follows the enabled global sharing methods. Global transport switches and keyboard destination management remain in Advanced settings; the global startup/auto-share switches are removed.
+
+Manual accounts may share destinations. Among startup-enabled accounts, each destination belongs to one account. Enabling startup generation or changing the destination of a startup-enabled account keeps the latest configuration and disables startup generation on conflicting accounts, preserving their destinations and showing an explanatory toast. Multiple accounts with no destination may generate at startup. Checkbox changes never generate a code or advance HOTP.
+
+On upgrade, previously enabled startup selections are preserved; selections hidden behind a disabled legacy global switch remain disabled. The old chooser-based automatic sharing has no explicit destination and is cleared so the user can choose one in the new row. Clipboard startup delivery runs first; keyboard and Jelling foreground sessions are queued, with expired queued codes discarded without regeneration. Physical testing remains required.

@@ -5,11 +5,24 @@ import android.content.SharedPreferences;
 import android.os.Build;
 
 public final class SharingSettings {
-    public static final String AUTO_SHARE="autoShareEnabled";
-    public static final String AUTO_SHARE_ACCOUNT="autoShareAccount";
     public static SharedPreferences automationPreferences(Context context) { return context.getSharedPreferences("settings",Context.MODE_PRIVATE); }
-    public static boolean generationEnabled(Context context) { return automationPreferences(context).getBoolean("autoGenerateStartup",false); }
-    public static boolean autoShareEnabled(Context context) { return automationPreferences(context).getBoolean(AUTO_SHARE,false); }
+    public static ShareRoute destination(Context context, String uuid) {
+        return destination(automationPreferences(context), uuid);
+    }
+    public static ShareRoute destination(SharedPreferences preferences, String uuid) {
+        try {
+            ShareRoute route = ShareRoute.valueOf(preferences.getString("accountDestination:" + uuid, "NONE"));
+            return route == ShareRoute.CHOOSER ? ShareRoute.NONE : route;
+        } catch (IllegalArgumentException e) { return ShareRoute.NONE; }
+    }
+    public static boolean enabled(Context context, ShareRoute route) {
+        switch (route) {
+            case CLIPBOARD: return clipboardEnabled(context);
+            case JELLING: return jellingEnabled(context);
+            case KEYBOARD: return keyboardEnabled(context);
+            default: return false;
+        }
+    }
     private SharingSettings() {}
     public static SharedPreferences preferences(Context context) { return context.getSharedPreferences("share_transports",Context.MODE_PRIVATE); }
     public static boolean clipboardEnabled(Context context) { return preferences(context).getBoolean("clipboard",true); }

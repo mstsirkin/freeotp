@@ -42,6 +42,8 @@ import com.google.gson.reflect.TypeToken;
 
 import org.fedorahosted.freeotp.Code;
 import org.fedorahosted.freeotp.main.share.SharingSettings;
+import org.fedorahosted.freeotp.main.share.ShareRoute;
+import android.widget.Toast;
 import org.fedorahosted.freeotp.TokenIcon;
 import org.fedorahosted.freeotp.R;
 import org.fedorahosted.freeotp.Token;
@@ -147,6 +149,15 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         }
 
         compat(context);
+        // Preserve enabled startup selections; dormant legacy selections stay dormant.
+        if (!mStartupSettings.getBoolean("accountAutomationV2", false)) {
+            SharedPreferences.Editor migration = mStartupSettings.edit();
+            if (!mStartupSettings.getBoolean("autoGenerateStartup", false))
+                for (String uuid : mItems) migration.remove("startupAccount:" + uuid);
+            // The old automatic share used a chooser, so no destination can be inferred safely.
+            migration.remove("autoShareAccount").remove("autoShareEnabled")
+                    .remove("autoGenerateStartup").putBoolean("accountAutomationV2", true).apply();
+        }
     }
 
     @Override
@@ -177,10 +188,8 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         Log.i(LOGTAG, String.format("Bind to view token [%s][%s]", token.getIssuer(), token.getLabel()));
         holder.bind(token, token_icon.mColor, image.first, image.second,
                 mActive.get(getItemId(position)), isSelected(position), token.getType());
-        holder.bindAutomation(isStartupGenerationEnabled(),
-                mStartupSettings.getBoolean("startupAccount:" + uuid, false),
-                mStartupSettings.getBoolean(SharingSettings.AUTO_SHARE, false),
-                uuid.equals(mStartupSettings.getString(SharingSettings.AUTO_SHARE_ACCOUNT, null)));
+        holder.bindAutomation(mStartupSettings.getBoolean("startupAccount:" + uuid, false),
+                SharingSettings.destination(mStartupSettings, uuid));
     }
 
     @Override
@@ -246,11 +255,8 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
             mTokenBackup.remove(uuid);
         }
 
-        SharedPreferences.Editor automation = mStartupSettings.edit().remove("startupAccount:" + uuid);
-        String selected = mStartupSettings.getString(SharingSettings.AUTO_SHARE_ACCOUNT, null);
-        if (selected != null && AutoShareSelection.remove(selected, uuid) == null)
-            automation.remove(SharingSettings.AUTO_SHARE_ACCOUNT);
-        automation.apply();
+        mStartupSettings.edit().remove("startupAccount:" + uuid)
+                .remove("accountDestination:" + uuid).apply();
         notifyItemRemoved(position);
         mKeyStore.deleteEntry(uuid);
     }
@@ -319,39 +325,47 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         }
     }
 
-    public boolean isStartupGenerationEnabled() {
-        return mStartupSettings.getBoolean(Activity.AUTO_GENERATE_STARTUP, false);
+    private void configureAccount(String uuid, ShareRoute route, boolean startup) {
+        Map<String, AccountAutomation.State> accounts = new java.util.LinkedHashMap<>();
+        for (String id : mItems) accounts.put(id, new AccountAutomation.State(
+                SharingSettings.destination(mStartupSettings, id), mStartupSettings.getBoolean("startupAccount:" + id, false)));
+        List<String> disabled = AccountAutomation.configure(accounts, uuid, route, startup);
+        SharedPreferences.Editor editor = mStartupSettings.edit();
+        for (Map.Entry<String, AccountAutomation.State> entry : accounts.entrySet()) {
+            editor.putBoolean("startupAccount:" + entry.getKey(), entry.getValue().startup);
+            editor.putString("accountDestination:" + entry.getKey(), entry.getValue().destination.name());
+        }
+        editor.apply();
+        for (String id : disabled) {
+            Token token = Token.deserialize(mSharedPreferences.getString(id, null));
+            String label = token == null ? id : token.getIssuer() + " " + token.getLabel();
+            Toast.makeText(mContext, mContext.getString(R.string.startup_destination_conflict, label.trim()), Toast.LENGTH_SHORT).show();
+        }
+        notifyItemRangeChanged(0, getItemCount());
     }
 
-    @Override
-    public boolean onStartupGenerationToggled(ViewHolder holder) {
-        int position = holder.getAdapterPosition();
-        if (position == RecyclerView.NO_POSITION)
-            return false;
-        String preference = "startupAccount:" + mItems.get(position);
-        boolean enabled = !mStartupSettings.getBoolean(preference, false);
-        mStartupSettings.edit().putBoolean(preference, enabled).apply();
-        return enabled;
-    }
-
-    @Override public boolean onAutoShareToggled(ViewHolder holder) {
+    @Override public boolean onStartupGenerationToggled(ViewHolder holder) {
         int position = holder.getAdapterPosition();
         if (position == RecyclerView.NO_POSITION) return false;
         String uuid = mItems.get(position);
-        String selected = AutoShareSelection.toggle(mStartupSettings.getString(SharingSettings.AUTO_SHARE_ACCOUNT, null), uuid);
-        SharedPreferences.Editor editor = mStartupSettings.edit();
-        if (selected == null) editor.remove(SharingSettings.AUTO_SHARE_ACCOUNT);
-        else editor.putString(SharingSettings.AUTO_SHARE_ACCOUNT, selected);
-        editor.apply();
-        notifyItemRangeChanged(0, getItemCount());
-        return uuid.equals(selected);
+        boolean enabled = !mStartupSettings.getBoolean("startupAccount:" + uuid, false);
+        configureAccount(uuid, SharingSettings.destination(mStartupSettings, uuid), enabled);
+        return enabled;
     }
+
+    @Override public void onDestinationToggled(ViewHolder holder, ShareRoute route) {
+        int position = holder.getAdapterPosition();
+        if (position == RecyclerView.NO_POSITION) return;
+        String uuid = mItems.get(position);
+        if (SharingSettings.destination(mStartupSettings, uuid) == route) route = ShareRoute.NONE;
+        configureAccount(uuid, route, mStartupSettings.getBoolean("startupAccount:" + uuid, false));
+    }
+
+    public ShareRoute destinationAt(int position) { return SharingSettings.destination(mStartupSettings, mItems.get(position)); }
 
     public void onCodeGenerated(String uuid, Code code) {}
 
     public void generateStartupCodes() {
-        if (!isStartupGenerationEnabled())
-            return;
         for (int position = 0; position < getItemCount(); position++) {
             if (!mStartupSettings.getBoolean("startupAccount:" + mItems.get(position), false))
                 continue;
@@ -477,6 +491,6 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
     }
 
     @Override
-    public void onShare(String code) {
+    public void onShare(ViewHolder holder, String code) {
     }
 }

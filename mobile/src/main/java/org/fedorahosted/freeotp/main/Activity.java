@@ -105,19 +105,34 @@ public class Activity extends AppCompatActivity
     static final String RESTORED = "restoreComplete";
     /* Generic settings preferences file */
     private SharedPreferences mSettings;
-    private Code mPendingAutoShare;
-    private String mPendingAutoShareAccount;
-    private boolean mAutomationResumed;
+    private static final class PendingShare {
+        final String uuid; final Code code;
+        PendingShare(String uuid, Code code) { this.uuid = uuid; this.code = code; }
+    }
+    private final java.util.LinkedList<PendingShare> mPendingShares = new java.util.LinkedList<>();
+    private boolean mAutomationResumed, mShareSessionPending;
     private final Handler mAutomationHandler = new Handler(Looper.getMainLooper());
     private void dispatchAutoShare() {
-        if (!mAutomationResumed || mPendingAutoShare == null) return;
-        Code code = mPendingAutoShare;
-        String uuid = mPendingAutoShareAccount;
-        mPendingAutoShare = null; mPendingAutoShareAccount = null;
-        if (code.isValid() && AutoShareSelection.shouldShare(
-                org.fedorahosted.freeotp.main.share.SharingSettings.autoShareEnabled(this),
-                mSettings.getString(org.fedorahosted.freeotp.main.share.SharingSettings.AUTO_SHARE_ACCOUNT, null), uuid))
-            org.fedorahosted.freeotp.main.share.ShareActions.share(this, code.getCode());
+        if (!mAutomationResumed || mShareSessionPending || getSupportFragmentManager().findFragmentByTag("share") != null) return;
+        // Clipboard needs no foreground session and must not be delayed by keyboard/discovery screens.
+        for (java.util.Iterator<PendingShare> it = mPendingShares.iterator(); it.hasNext();) {
+            PendingShare pending = it.next();
+            if (org.fedorahosted.freeotp.main.share.SharingSettings.destination(this, pending.uuid)
+                    == org.fedorahosted.freeotp.main.share.ShareRoute.CLIPBOARD) {
+                it.remove();
+                if (pending.code.isValid()) org.fedorahosted.freeotp.main.share.ShareActions.shareTo(this,
+                        pending.code.getCode(), org.fedorahosted.freeotp.main.share.ShareRoute.CLIPBOARD);
+            }
+        }
+        while (!mPendingShares.isEmpty()) {
+            PendingShare pending = mPendingShares.removeFirst();
+            org.fedorahosted.freeotp.main.share.ShareRoute route = org.fedorahosted.freeotp.main.share.SharingSettings.destination(this, pending.uuid);
+            if (!pending.code.isValid() || !org.fedorahosted.freeotp.main.share.SharingSettings.enabled(this, route)) continue;
+            if (route == org.fedorahosted.freeotp.main.share.ShareRoute.KEYBOARD) mAutomationResumed = false;
+            if (route == org.fedorahosted.freeotp.main.share.ShareRoute.JELLING) mShareSessionPending = true;
+            org.fedorahosted.freeotp.main.share.ShareActions.shareTo(this, pending.code.getCode(), route);
+            return;
+        }
     }
     @Override protected void onPostResume() {
         super.onPostResume(); mAutomationResumed = true;
@@ -127,7 +142,6 @@ public class Activity extends AppCompatActivity
     @Override protected void onPause() { mAutomationResumed = false; super.onPause(); }
     @Override protected void onDestroy() { mAutomationHandler.removeCallbacksAndMessages(null); super.onDestroy(); }
     static final String SETTINGS = "settings";
-    public static final String AUTO_GENERATE_STARTUP = "autoGenerateStartup";
     public static final String SORT_BY_MRU = "sortByMostRecentlyUsed";
 
 
@@ -253,6 +267,14 @@ public class Activity extends AppCompatActivity
 
         mBackups = getApplicationContext().getSharedPreferences(BACKUP, Context.MODE_PRIVATE);
         mSettings = getApplicationContext().getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(new androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks() {
+            @Override public void onFragmentDetached(androidx.fragment.app.FragmentManager manager, androidx.fragment.app.Fragment fragment) {
+                if (fragment instanceof org.fedorahosted.freeotp.main.share.ShareFragment) {
+                    mShareSessionPending = false;
+                    mAutomationHandler.post(Activity.this::dispatchAutoShare);
+                }
+            }
+        }, false);
 
         initLaunchers();
 
@@ -270,17 +292,20 @@ public class Activity extends AppCompatActivity
                 }
 
                 @Override public void onCodeGenerated(String uuid, Code code) {
-                    if (AutoShareSelection.shouldShare(
-                            org.fedorahosted.freeotp.main.share.SharingSettings.autoShareEnabled(Activity.this),
-                            mSettings.getString(org.fedorahosted.freeotp.main.share.SharingSettings.AUTO_SHARE_ACCOUNT, null), uuid)) {
-                        mPendingAutoShare = code; mPendingAutoShareAccount = uuid;
+                    org.fedorahosted.freeotp.main.share.ShareRoute route = org.fedorahosted.freeotp.main.share.SharingSettings.destination(Activity.this, uuid);
+                    if (route != org.fedorahosted.freeotp.main.share.ShareRoute.NONE) {
+                        mPendingShares.add(new PendingShare(uuid, code));
                         mAutomationHandler.post(Activity.this::dispatchAutoShare);
                     }
                 }
 
-                @Override
-                public void onShare(String code) {
-                    org.fedorahosted.freeotp.main.share.ShareActions.share(Activity.this, code);
+                @Override public void onShare(ViewHolder holder, String code) {
+                    int position = holder.getAdapterPosition();
+                    if (position == RecyclerView.NO_POSITION) return;
+                    org.fedorahosted.freeotp.main.share.ShareRoute route = mTokenAdapter.destinationAt(position);
+                    if (route == org.fedorahosted.freeotp.main.share.ShareRoute.NONE)
+                        org.fedorahosted.freeotp.main.share.ShareActions.share(Activity.this, code);
+                    else org.fedorahosted.freeotp.main.share.ShareActions.shareTo(Activity.this, code, route);
                 }
             };
         } catch (GeneralSecurityException | IOException e) {

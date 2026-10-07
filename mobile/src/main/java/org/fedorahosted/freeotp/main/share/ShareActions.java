@@ -13,6 +13,15 @@ public final class ShareActions {
     private ShareActions() {}
     public static void share(FragmentActivity activity,String code) {
         ShareRoute route=ShareRoute.choose(SharingSettings.clipboardEnabled(activity),SharingSettings.jellingEnabled(activity),SharingSettings.keyboardEnabled(activity));
+        dispatch(activity, code, route);
+    }
+    public static void shareTo(FragmentActivity activity, String code, ShareRoute route) {
+        if (!SharingSettings.enabled(activity, route)) {
+            Toast.makeText(activity, R.string.share_destination_disabled, Toast.LENGTH_SHORT).show(); return;
+        }
+        dispatch(activity, code, route);
+    }
+    private static void dispatch(FragmentActivity activity, String code, ShareRoute route) {
         switch(route) {
             case CLIPBOARD:
                 activity.getSystemService(ClipboardManager.class).setPrimaryClip(ClipData.newPlainText(null,code));
