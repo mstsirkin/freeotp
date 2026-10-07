@@ -108,6 +108,27 @@ public class Activity extends AppCompatActivity
     static final String RESTORED = "restoreComplete";
     /* Generic settings preferences file */
     private SharedPreferences mSettings;
+    private Code mPendingAutoShare;
+    private String mPendingAutoShareAccount;
+    private boolean mAutomationResumed;
+    private final Handler mAutomationHandler = new Handler(Looper.getMainLooper());
+    private void dispatchAutoShare() {
+        if (!mAutomationResumed || mPendingAutoShare == null) return;
+        Code code = mPendingAutoShare;
+        String uuid = mPendingAutoShareAccount;
+        mPendingAutoShare = null; mPendingAutoShareAccount = null;
+        if (code.isValid() && AutoShareSelection.shouldShare(
+                org.fedorahosted.freeotp.main.share.SharingSettings.autoShareEnabled(this),
+                mSettings.getString(org.fedorahosted.freeotp.main.share.SharingSettings.AUTO_SHARE_ACCOUNT, null), uuid))
+            org.fedorahosted.freeotp.main.share.ShareActions.share(this, code.getCode());
+    }
+    @Override protected void onPostResume() {
+        super.onPostResume(); mAutomationResumed = true;
+        if (mTokenAdapter != null) mTokenAdapter.notifyItemRangeChanged(0, mTokenAdapter.getItemCount());
+        mAutomationHandler.post(this::dispatchAutoShare);
+    }
+    @Override protected void onPause() { mAutomationResumed = false; super.onPause(); }
+    @Override protected void onDestroy() { mAutomationHandler.removeCallbacksAndMessages(null); super.onDestroy(); }
     static final String SETTINGS = "settings";
     static final String AUTO_COPY_CLIPBOARD = "copyClipboard";
     public static final String AUTO_GENERATE_STARTUP = "autoGenerateStartup";
@@ -258,6 +279,15 @@ public class Activity extends AppCompatActivity
                     Activity.this.onActivate(holder);
                 }
 
+                @Override public void onCodeGenerated(String uuid, Code code) {
+                    if (AutoShareSelection.shouldShare(
+                            org.fedorahosted.freeotp.main.share.SharingSettings.autoShareEnabled(Activity.this),
+                            mSettings.getString(org.fedorahosted.freeotp.main.share.SharingSettings.AUTO_SHARE_ACCOUNT, null), uuid)) {
+                        mPendingAutoShare = code; mPendingAutoShareAccount = uuid;
+                        mAutomationHandler.post(Activity.this::dispatchAutoShare);
+                    }
+                }
+
                 @Override
                 public void onShare(String code) {
                     org.fedorahosted.freeotp.main.share.ShareActions.share(Activity.this, code);
@@ -353,8 +383,6 @@ public class Activity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mMenu = menu;
-        menu.findItem(R.id.action_generate_startup).setChecked(
-                mSettings.getBoolean(AUTO_GENERATE_STARTUP, false));
         mAutoClipboard = menu.findItem(R.id.action_clipboard);
         /* Set checked/unchecked checkbox in menu for auto copy to clipboard setting */
         if(mSettings.getBoolean(AUTO_COPY_CLIPBOARD, false)) {
@@ -520,13 +548,6 @@ public class Activity extends AppCompatActivity
 
             case R.id.action_sharing_settings:
                 startActivity(new Intent(this, org.fedorahosted.freeotp.main.share.SharingSettingsActivity.class));
-                return true;
-
-            case R.id.action_generate_startup:
-                boolean startupEnabled = !mSettings.getBoolean(AUTO_GENERATE_STARTUP, false);
-                mSettings.edit().putBoolean(AUTO_GENERATE_STARTUP, startupEnabled).apply();
-                item.setChecked(startupEnabled);
-                mTokenAdapter.notifyItemRangeChanged(0, mTokenAdapter.getItemCount());
                 return true;
 
             case R.id.action_clipboard:

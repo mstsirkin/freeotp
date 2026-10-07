@@ -25,6 +25,11 @@ public final class SharingSettingsActivity extends Activity {
         Button manage=new Button(this); manage.setText(R.string.share_settings_manage); manage.setAllCaps(false); manage.setEnabled(SharingSettings.keyboardEnabled(this)); manage.setOnClickListener(view->startActivity(new Intent(this,KeyboardActivity.class))); body.addView(manage);
         jelling.setOnCheckedChangeListener((button,enabled)->SharingSettings.preferences(this).edit().putBoolean("jelling",enabled).apply());
         keyboard.setOnCheckedChangeListener((button,enabled)->{ SharingSettings.preferences(this).edit().putBoolean("keyboard",enabled).apply(); manage.setEnabled(enabled); });
+        TextView automationTitle=new TextView(this); automationTitle.setText(R.string.automation_title); automationTitle.setTextSize(18); automationTitle.setPadding(0,dp(24),0,dp(8)); body.addView(automationTitle);
+        Switch generation=new Switch(this); generation.setText(R.string.auto_generate_startup); generation.setTextSize(17); generation.setPadding(0,dp(16),0,dp(16)); generation.setChecked(SharingSettings.generationEnabled(this)); body.addView(generation);
+        Switch autoShare=new Switch(this); autoShare.setText(R.string.auto_share_generated); autoShare.setTextSize(17); autoShare.setPadding(0,dp(16),0,dp(16)); autoShare.setChecked(SharingSettings.autoShareEnabled(this)); body.addView(autoShare);
+        generation.setOnCheckedChangeListener((button,enabled)->SharingSettings.automationPreferences(this).edit().putBoolean("autoGenerateStartup",enabled).apply());
+        autoShare.setOnCheckedChangeListener((button,enabled)->SharingSettings.automationPreferences(this).edit().putBoolean(SharingSettings.AUTO_SHARE,enabled).apply());
         if(Build.VERSION.SDK_INT<28) { TextView note=new TextView(this); note.setText(R.string.share_keyboard_unavailable); body.addView(note); }
         ScrollView scroll=new ScrollView(this); scroll.addView(body); setContentView(scroll);
     }

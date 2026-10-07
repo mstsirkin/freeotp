@@ -41,6 +41,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.fedorahosted.freeotp.Code;
+import org.fedorahosted.freeotp.main.share.SharingSettings;
 import org.fedorahosted.freeotp.TokenIcon;
 import org.fedorahosted.freeotp.R;
 import org.fedorahosted.freeotp.Token;
@@ -176,8 +177,10 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         Log.i(LOGTAG, String.format("Bind to view token [%s][%s]", token.getIssuer(), token.getLabel()));
         holder.bind(token, token_icon.mColor, image.first, image.second,
                 mActive.get(getItemId(position)), isSelected(position), token.getType());
-        holder.bindStartupGeneration(isStartupGenerationEnabled(),
-                mStartupSettings.getBoolean("startupAccount:" + uuid, false));
+        holder.bindAutomation(isStartupGenerationEnabled(),
+                mStartupSettings.getBoolean("startupAccount:" + uuid, false),
+                mStartupSettings.getBoolean(SharingSettings.AUTO_SHARE, false),
+                uuid.equals(mStartupSettings.getString(SharingSettings.AUTO_SHARE_ACCOUNT, null)));
     }
 
     @Override
@@ -243,7 +246,11 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
             mTokenBackup.remove(uuid);
         }
 
-        mStartupSettings.edit().remove("startupAccount:" + uuid).apply();
+        SharedPreferences.Editor automation = mStartupSettings.edit().remove("startupAccount:" + uuid);
+        String selected = mStartupSettings.getString(SharingSettings.AUTO_SHARE_ACCOUNT, null);
+        if (selected != null && AutoShareSelection.remove(selected, uuid) == null)
+            automation.remove(SharingSettings.AUTO_SHARE_ACCOUNT);
+        automation.apply();
         notifyItemRemoved(position);
         mKeyStore.deleteEntry(uuid);
     }
@@ -327,6 +334,21 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         return enabled;
     }
 
+    @Override public boolean onAutoShareToggled(ViewHolder holder) {
+        int position = holder.getAdapterPosition();
+        if (position == RecyclerView.NO_POSITION) return false;
+        String uuid = mItems.get(position);
+        String selected = AutoShareSelection.toggle(mStartupSettings.getString(SharingSettings.AUTO_SHARE_ACCOUNT, null), uuid);
+        SharedPreferences.Editor editor = mStartupSettings.edit();
+        if (selected == null) editor.remove(SharingSettings.AUTO_SHARE_ACCOUNT);
+        else editor.putString(SharingSettings.AUTO_SHARE_ACCOUNT, selected);
+        editor.apply();
+        notifyItemRangeChanged(0, getItemCount());
+        return uuid.equals(selected);
+    }
+
+    public void onCodeGenerated(String uuid, Code code) {}
+
     public void generateStartupCodes() {
         if (!isStartupGenerationEnabled())
             return;
@@ -406,6 +428,7 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
 
         Log.i(LOGTAG, String.format("getCode: returning code"));
 
+        onCodeGenerated(uuid, code);
         return code;
     }
 

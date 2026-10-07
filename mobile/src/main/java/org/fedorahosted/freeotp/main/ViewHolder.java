@@ -51,6 +51,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
         void onActivated(ViewHolder holder);
         void onShare(String code);
         boolean onStartupGenerationToggled(ViewHolder holder);
+        boolean onAutoShareToggled(ViewHolder holder);
     }
     private static final String LOGTAG = "Adapter";
 
@@ -73,7 +74,8 @@ class ViewHolder extends RecyclerView.ViewHolder {
     private TextView mIssuer;
     private TextView mLabel;
     private TextView mCode;
-    private CheckBox mStartupGeneration;
+    private CheckBox mStartupGeneration, mAutoShare;
+    private View mAutomationControls;
 
     private View mView;
 
@@ -211,6 +213,9 @@ class ViewHolder extends RecyclerView.ViewHolder {
         mCode = itemView.findViewById(R.id.code);
         mView = itemView;
         mStartupGeneration = itemView.findViewById(R.id.startup_generation);
+        mAutoShare = itemView.findViewById(R.id.auto_share);
+        mAutomationControls = itemView.findViewById(R.id.automation_controls);
+        mAutoShare.setOnClickListener(v -> mAutoShare.setChecked(mEventListener.onAutoShareToggled(ViewHolder.this)));
         mStartupGeneration.setOnClickListener(v -> mStartupGeneration.setChecked(
                 mEventListener.onStartupGenerationToggled(ViewHolder.this)));
 
@@ -281,18 +286,20 @@ class ViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    void bindStartupGeneration(boolean enabled, boolean checked) {
-        mStartupGeneration.setVisibility(enabled ? View.VISIBLE : View.GONE);
-        mStartupGeneration.setChecked(checked);
+    void bindAutomation(boolean generationEnabled, boolean generationChecked, boolean shareEnabled, boolean shareChecked) {
+        mAutomationControls.setVisibility(generationEnabled || shareEnabled ? View.VISIBLE : View.GONE);
+        mStartupGeneration.setVisibility(generationEnabled ? View.VISIBLE : View.GONE);
+        mStartupGeneration.setChecked(generationChecked);
+        mAutoShare.setVisibility(shareEnabled ? View.VISIBLE : View.GONE);
+        mAutoShare.setChecked(shareChecked);
         mStartupGeneration.setContentDescription(mView.getResources().getString(
                 R.string.startup_account_description, mIssuer.getText(), mLabel.getText()));
-        int space = enabled ? (int) (64 * mView.getResources().getDisplayMetrics().density) : 0;
-        ViewGroup.MarginLayoutParams shareParams = (ViewGroup.MarginLayoutParams) mShare.getLayoutParams();
-        shareParams.setMarginEnd(space);
-        mShare.setLayoutParams(shareParams);
-        ViewGroup.MarginLayoutParams lockParams = (ViewGroup.MarginLayoutParams) mLock.getLayoutParams();
-        lockParams.setMarginEnd(space + mView.getResources().getDimensionPixelSize(R.dimen.margin));
-        mLock.setLayoutParams(lockParams);
+        mAutoShare.setContentDescription(mView.getResources().getString(
+                R.string.auto_share_account_description, mIssuer.getText(), mLabel.getText()));
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            mStartupGeneration.setTooltipText(mView.getResources().getString(R.string.auto_generate_startup));
+            mAutoShare.setTooltipText(mView.getResources().getString(R.string.auto_share_generated));
+        }
     }
 
     void displayCode(Code code) {
