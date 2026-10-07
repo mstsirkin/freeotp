@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FreeOTP Plus</string>
-    <string name="app_welcome">Welkom bij FreeOTP 2.0</string>
+    <string name="app_welcome">Welkom bij FreeOTP Plus</string>
 
     <!-- Buttons -->
     <string name="ok">Ok</string>
@@ -30,9 +30,9 @@
     <string name="error_camera_open">Fout bij het openen van de camera!</string>
 
     <!-- Strings for the various dialogs. -->
-    <string name="main_about_title">FreeOTP Version %1$s (%2$d)</string>
-    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP is gelicenseerd onder &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;Apache 2.0&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;Voor meer informatie, zie onze &lt;a href=&quot;https://freeotp.github.io&quot;&gt;website&lt;/a&gt;.</string>
-    <string name="main_welcome">Welkom bij FreeOTP!\n\nVoeg een token toe om te beginnen.</string>
+    <string name="main_about_title">FreeOTP Plus Version %1$s (%2$d)</string>
+    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP Plus is gelicenseerd onder &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;Apache 2.0&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;Voor meer informatie, zie onze &lt;a href=&quot;https://freeotp.github.io&quot;&gt;website&lt;/a&gt;.</string>
+    <string name="main_welcome">Welkom bij FreeOTP Plus!\n\nVoeg een token toe om te beginnen.</string>
     <string name="main_deletion_title">Geselecteerde tokens verwijderen?</string>
     <string name="main_deletion_message">Het verwijderen van een token schakelt deze niet uit op de server. Als u doorgaat, heeft u mogelijk geen toegang meer tot uw account. Het verwijderen van een token kan niet ongedaan worden gemaakt.</string>
     <string name="main_unsafe_title">Token is onveilig!</string>
@@ -56,7 +56,7 @@
     <!-- Strings for the password activity. -->
     <string name="password">Wachtwoord</string>
     <string name="password_confirm">Bevestig Wachtwoord</string>
-    <string name="password_info">Met token back-ups kunt u gegevensverlies herstellen en uw tokens moeiteloos overzetten naar een nieuw apparaat.\n\nBack-ups worden versleuteld met het hieronder vermelde wachtwoord. De beveiliging van uw back-ups hangt af van een sterk wachtwoord.\n\nHet FreeOTP-beveiligingsmodel schrijft voor dat dit wachtwoord op een later tijdstip NIET kan worden gewijzigd. Houd hier rekening mee bij het kiezen van uw wachtwoord.</string>
+    <string name="password_info">Met token back-ups kunt u gegevensverlies herstellen en uw tokens moeiteloos overzetten naar een nieuw apparaat.\n\nBack-ups worden versleuteld met het hieronder vermelde wachtwoord. De beveiliging van uw back-ups hangt af van een sterk wachtwoord.\n\nHet FreeOTP Plus-beveiligingsmodel schrijft voor dat dit wachtwoord op een later tijdstip NIET kan worden gewijzigd. Houd hier rekening mee bij het kiezen van uw wachtwoord.</string>
     <string name="password_match">Wachtwoorden komen niet overeen!</string>
 
 
@@ -97,9 +97,9 @@
     <string name="backup_title">Back-up</string>
     <string name="restore_title">Herstellen</string>
     <string name="backup_restore_title">Back-up en Herstellen</string>
-    <string name="keystore_migration_explanation">FreeOTP-tokens worden nu gemigreerd naar de Android Keystore! Dit resulteert in een verhoogde beveiliging van token geheimen, maar sleutelmateriaal kan niet worden geëxporteerd. \n\nBack-up- en herstelfunctionaliteit is nu toegevoegd om ervoor te zorgen dat tokens kunnen worden hersteld. U wordt gevraagd een hoofdwachtwoord te maken om versleutelde tokenback-ups in te stellen.</string>
+    <string name="keystore_migration_explanation">FreeOTP Plus-tokens worden nu gemigreerd naar de Android Keystore! Dit resulteert in een verhoogde beveiliging van token geheimen, maar sleutelmateriaal kan niet worden geëxporteerd. \n\nBack-up- en herstelfunctionaliteit is nu toegevoegd om ervoor te zorgen dat tokens kunnen worden hersteld. U wordt gevraagd een hoofdwachtwoord te maken om versleutelde tokenback-ups in te stellen.</string>
     <string name="manual_backup_explanation">Als alternatief kan een versleuteld back-upgegevensbestand worden geëxporteerd naar externe opslag vanuit de app. Het bovenste werkbalkmenu bevat nu items met de labels \'Back-up\' en \'Herstellen\' om deze handmatige back-up methode te gebruiken.</string>
-    <string name="google_auto_backup_link">FreeOTP kan deelnemen aan de automatische back-up- en herstelfunctionaliteit van Android. Deze &lt;a href=&quot;https://support.google.com/android/answer/2819582?hl=nl&quot;&gt;Google-link&lt;/a&gt; bevat informatie over hoe u deze back-upmethode kunt gebruiken.</string>
+    <string name="google_auto_backup_link">FreeOTP Plus kan deelnemen aan de automatische back-up- en herstelfunctionaliteit van Android. Deze &lt;a href=&quot;https://support.google.com/android/answer/2819582?hl=nl&quot;&gt;Google-link&lt;/a&gt; bevat informatie over hoe u deze back-upmethode kunt gebruiken.</string>
     <string name="backup_imageview">backup imageView</string>
     <string name="keystore_image">keystore image</string>
     <string name="android_keystore_title">Android Keystore</string>

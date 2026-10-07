@@ -1,0 +1,12 @@
+gradle.beforeProject { app ->
+    app.plugins.withId('com.android.application') {
+        app.android.signingConfigs.create('personalRelease') {
+            storeFile = new File(System.getenv('TXT_BT_SIGNING_KEY'))
+            storePassword = 'android'
+            keyAlias = 'androiddebugkey'
+            keyPassword = 'android'
+        }
+        app.android.buildTypes.release.signingConfig = app.android.signingConfigs.personalRelease
+        app.android.buildTypes.release.applicationIdSuffix = ".debug"
+    }
+}

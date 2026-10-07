@@ -20,7 +20,7 @@
 
 <resources>
     <string name="app_name">FreeOTP Plus</string>
-    <string name="app_welcome">Välkommen till FreeOTP 2.0</string>
+    <string name="app_welcome">Välkommen till FreeOTP Plus</string>
 
     <!-- Buttons -->
     <string name="ok">Ok</string>
@@ -49,9 +49,9 @@
     <string name="error_camera_open">Ett fel uppstod när kameran öppnades!</string>
 
     <!-- Strings for the various dialogs. -->
-    <string name="main_about_title">FreeOTP Version %1$s (%2$d)</string>
-    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP är licensierat under &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;Apache 2.0&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;För mer information, besök vår &lt;a href=&quot;https://freeotp.github.io&quot;&gt;webbplats&lt;/a&gt;.</string>
-    <string name="main_welcome">Välkommen till FreeOTP!\n\nLägg till en token för att komma igång.</string>
+    <string name="main_about_title">FreeOTP Plus Version %1$s (%2$d)</string>
+    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP Plus är licensierat under &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;Apache 2.0&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;För mer information, besök vår &lt;a href=&quot;https://freeotp.github.io&quot;&gt;webbplats&lt;/a&gt;.</string>
+    <string name="main_welcome">Välkommen till FreeOTP Plus!\n\nLägg till en token för att komma igång.</string>
     <string name="main_deletion_title">Radera markerade tokens?</string>
     <string name="main_deletion_message">Att radera en token inaktiverar inte den på servern. Om du fortsätter kan du bli utelåst från ditt konto. Radering av en token kan inte ångras.</string>
     <string name="main_unsafe_title">Token är osäker!</string>
@@ -75,7 +75,7 @@
     <!-- Strings for the password activity. -->
     <string name="password">Lösenord</string>
     <string name="password_confirm">Bekräfta lösenord</string>
-    <string name="password_info">Säkerhetskopiering av tokens gör att du kan återställa vid dataförlust och enkelt flytta dina tokens till en ny enhet.\n\nSäkerhetskopior krypteras med lösenordet du anger nedan. Säkerheten för dina säkerhetskopior är berorende av att du väljer ett starkt lösenord.\n\nFreeOTPs säkerhetsmodell innebär att detta lösenord INTE KAN ändras i efterhand. Vänligen tänk på detta när du väljer ditt lösenord.</string>
+    <string name="password_info">Säkerhetskopiering av tokens gör att du kan återställa vid dataförlust och enkelt flytta dina tokens till en ny enhet.\n\nSäkerhetskopior krypteras med lösenordet du anger nedan. Säkerheten för dina säkerhetskopior är berorende av att du väljer ett starkt lösenord.\n\nFreeOTP Plus säkerhetsmodell innebär att detta lösenord INTE KAN ändras i efterhand. Vänligen tänk på detta när du väljer ditt lösenord.</string>
     <string name="password_match">Lösenorden matchar inte!</string>
 
     <!-- Strings for Manual Add activity -->
@@ -118,9 +118,9 @@
     <string name="backup_title">Säkerhetskopia</string>
     <string name="restore_title">Återställ</string>
     <string name="backup_restore_title">Säkerhetskopiering och återställning</string>
-    <string name="keystore_migration_explanation">FreeOTP-tokens har nu migrerats till Android Keystore! Detta ger ökad säkerhet för tokenhemligheter, men nyckelmaterial kan inte exporteras. \n\nFunktionalitet för säkerhetskopiering och återställning har lagts till för att säkerställa att tokens kan återställas. Du kommer att uppmanas att skapa ett huvudlösenord för att konfigurera krypterade säkerhetskopior av tokens.</string>
+    <string name="keystore_migration_explanation">FreeOTP Plus-tokens har nu migrerats till Android Keystore! Detta ger ökad säkerhet för tokenhemligheter, men nyckelmaterial kan inte exporteras. \n\nFunktionalitet för säkerhetskopiering och återställning har lagts till för att säkerställa att tokens kan återställas. Du kommer att uppmanas att skapa ett huvudlösenord för att konfigurera krypterade säkerhetskopior av tokens.</string>
     <string name="manual_backup_explanation">Alternativt kan en krypterad säkerhetskopieringsfil exporteras till extern lagring från appen. Verktygsfältets meny innehåller nu alternativen \'Säkerhetskopia\' och \'Återställ\' för att använda denna manuella säkerhetskopieringsmetod.</string>
-    <string name="google_auto_backup_link">FreeOTP kan delta i Androids automatiska säkerhetskopiering och återställning. Denna &lt;a href=&quot;https://support.google.com/android/answer/2819582?hl=sv&quot;&gt;Google-länk&lt;/a&gt; innehåller information om hur du använder denna säkerhetskopieringsmetod.</string>
+    <string name="google_auto_backup_link">FreeOTP Plus kan delta i Androids automatiska säkerhetskopiering och återställning. Denna &lt;a href=&quot;https://support.google.com/android/answer/2819582?hl=sv&quot;&gt;Google-länk&lt;/a&gt; innehåller information om hur du använder denna säkerhetskopieringsmetod.</string>
     <string name="backup_imageview">säkerhetskopia bildvy</string>
     <string name="keystore_image">keystore-bild</string>
     <string name="android_keystore_title">Android Keystore</string>

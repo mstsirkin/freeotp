@@ -20,7 +20,7 @@
 
 <resources>
     <string name="app_name">FreeOTP Plus</string>
-    <string name="app_welcome">Ongi etorri FreeOTP 2.0-ra</string>
+    <string name="app_welcome">Ongi etorri FreeOTP Plus-ra</string>
 
     <!-- Buttons -->
     <string name="ok">Ados</string>
@@ -49,9 +49,9 @@
     <string name="error_camera_open">Errorea kamera irekitzean!</string>
 
     <!-- Strings for the various dialogs. -->
-    <string name="main_about_title">FreeOTP %1$s (%2$d) bertsioa</string>
-    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP-k &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;Apache 2.0&lt;/a&gt; lizentzia du.&lt;br/&gt;&lt;br/&gt;Informazio gehiago &lt;a href=&quot;https://freeotp.github.io&quot;&gt;gure webgunean&lt;/a&gt;.</string>
-    <string name="main_welcome">Ongi etorri FreeOTP-ra!\n\nGehitu token bat hasteko.</string>
+    <string name="main_about_title">FreeOTP Plus %1$s (%2$d) bertsioa</string>
+    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP Plus-k &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;Apache 2.0&lt;/a&gt; lizentzia du.&lt;br/&gt;&lt;br/&gt;Informazio gehiago &lt;a href=&quot;https://freeotp.github.io&quot;&gt;gure webgunean&lt;/a&gt;.</string>
+    <string name="main_welcome">Ongi etorri FreeOTP Plus-ra!\n\nGehitu token bat hasteko.</string>
     <string name="main_deletion_title">Hautatutako tokenak ezabatu?</string>
     <string name="main_deletion_message">Token bat ezabatzeak ez du desgaitzen zerbitzarian. Jarraitzen baduzu, kontua blokeatuta geratu daiteke. Token bat ezabatzea ezin da desegin.</string>
     <string name="main_unsafe_title">Tokena ez da segurua!</string>
@@ -75,7 +75,7 @@
     <!-- Strings for the password activity. -->
     <string name="password">Pasahitza</string>
     <string name="password_confirm">Berretsi pasahitza</string>
-    <string name="password_info">Tokenen babeskopiek aukera ematen dizute datuen galeratik errekuperatzeko eta tokenak gailu berri batera erraz transferitzeko.\n\nBabeskopiak behean jarritako pasahitzarekin enkriptatzen dira. Babeskopiak seguruak izan daitezen pasahitz sendo bat erabili behar da.\n\nFreeOTP-ren segurtasun ereduaren ondorioz pasahitzak EZINGO DIRA aldatu. Kontuan izan pasahitza aukeratzean.</string>
+    <string name="password_info">Tokenen babeskopiek aukera ematen dizute datuen galeratik errekuperatzeko eta tokenak gailu berri batera erraz transferitzeko.\n\nBabeskopiak behean jarritako pasahitzarekin enkriptatzen dira. Babeskopiak seguruak izan daitezen pasahitz sendo bat erabili behar da.\n\nFreeOTP Plus-ren segurtasun ereduaren ondorioz pasahitzak EZINGO DIRA aldatu. Kontuan izan pasahitza aukeratzean.</string>
     <string name="password_match">Pasahitzak ez datoz bat!</string>
 
 
@@ -118,9 +118,9 @@
     <string name="backup_title">Babeskopia</string>
     <string name="restore_title">Berrezarri</string>
     <string name="backup_restore_title">Backup and Restore</string>
-    <string name="keystore_migration_explanation">FreeOTP tokenak Android Keystore-ra migratu dira! Ondorioz token sekretuen segurtasuna handiagoa da, baina gakoak ezin dira esportatu. \n\nBabeskopiak eta berrezartzeko funtzionalitatea gehitu dira tokenak berreskuratu ahal izatea ziurtatzeko. Pasahitz nagusi bat sortzeko eskatuko zaizu, tokenen babeskopia enkriptatuak konfiguratzeko.</string>
+    <string name="keystore_migration_explanation">FreeOTP Plus tokenak Android Keystore-ra migratu dira! Ondorioz token sekretuen segurtasuna handiagoa da, baina gakoak ezin dira esportatu. \n\nBabeskopiak eta berrezartzeko funtzionalitatea gehitu dira tokenak berreskuratu ahal izatea ziurtatzeko. Pasahitz nagusi bat sortzeko eskatuko zaizu, tokenen babeskopia enkriptatuak konfiguratzeko.</string>
     <string name="manual_backup_explanation">Alternatively, an encrypted backup data file can be exported to external storage from within the App. The top toolbar menu now contains items labeled \'Backup\' and \'Restore\' to utilize this manual backup method.</string>
-    <string name="google_auto_backup_link">FreeOTP-k Androiden babeskopia eta berrezartze funtzionalitate automatikoak erabil ditzake. &lt;a href=&quot;https://support.google.com/android/answer/2819582?hl=en&quot;&gt;Google-ren esteka&lt;/a&gt; honetan aurkituko duzu babeskopia metodo hau nola erabili.</string>
+    <string name="google_auto_backup_link">FreeOTP Plus-k Androiden babeskopia eta berrezartze funtzionalitate automatikoak erabil ditzake. &lt;a href=&quot;https://support.google.com/android/answer/2819582?hl=en&quot;&gt;Google-ren esteka&lt;/a&gt; honetan aurkituko duzu babeskopia metodo hau nola erabili.</string>
     <string name="backup_imageview">Babeskopiaren irudi-ikuspegia</string>
     <string name="keystore_image">Keystore irudia</string>
     <string name="android_keystore_title">Android Keystore</string>

@@ -45,7 +45,7 @@ public final class KeyboardLink implements BluetoothProfile.ServiceListener {
         events.addLast(SystemClock.elapsedRealtime()+" " + value);
     }
     public String diagnostics() {
-        StringBuilder result=new StringBuilder("FreeOTP Plus keyboard 2.0.6-plus.3\nAndroid API "+android.os.Build.VERSION.SDK_INT+"\n");
+        StringBuilder result=new StringBuilder("FreeOTP Plus keyboard 2.0.6-plus.4\nAndroid API "+android.os.Build.VERSION.SDK_INT+"\n");
         for(String event:events) result.append(event).append('\n');
         return result.toString(); // No text, key values, or Bluetooth addresses.
     }
