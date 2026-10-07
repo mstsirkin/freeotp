@@ -138,6 +138,21 @@ public class TokenPersistence {
         mBackups.edit().putString(uuid.concat("-token"), token).apply();
     }
 
+    public void updateTokenMetadata(String uuid, String token) {
+        // Only update accounts whose encrypted secret is already backed up.
+        if (mBackups.contains(uuid))
+            mBackups.edit().putString(uuid + "-token", token).apply();
+    }
+
+    static void refreshBackupMetadata(SharedPreferences backups, SharedPreferences tokens) {
+        SharedPreferences.Editor editor = backups.edit();
+        for (Map.Entry<String, ?> entry : tokens.getAll().entrySet()) {
+            if (backups.contains(entry.getKey()) && entry.getValue() instanceof String)
+                editor.putString(entry.getKey() + "-token", (String) entry.getValue());
+        }
+        editor.apply();
+    }
+
     public void remove(String uuid) {
         mBackups.edit().remove(uuid).apply();
         mBackups.edit().remove(uuid.concat("-token")).apply();
@@ -229,6 +244,8 @@ public class TokenPersistence {
             FileOutputStream fileOutputStream = new FileOutputStream(pfd.getFileDescriptor());
             output = new ObjectOutputStream(fileOutputStream);
 
+            // Repair metadata from older versions before exporting, without touching ciphertext.
+            refreshBackupMetadata(mBackups, mTokens);
             output.writeObject(mBackups.getAll());
             fileOutputStream.close();
             pfd.close();

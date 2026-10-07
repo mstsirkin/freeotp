@@ -370,7 +370,10 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
             code = token.getCode(key);
             if (recordUsage)
                 token.setLastUsed(System.currentTimeMillis());
-            mSharedPreferences.edit().putString(uuid, token.serialize()).apply();
+            String metadata = token.serialize();
+            mSharedPreferences.edit().putString(uuid, metadata).apply();
+            if (mTokenBackup != null)
+                mTokenBackup.updateTokenMetadata(uuid, metadata);
         } catch (UserNotAuthenticatedException | KeyPermanentlyInvalidatedException e) {
             Log.e(LOGTAG, "Exception", e);
             throw e;
