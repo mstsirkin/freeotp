@@ -18,6 +18,8 @@ import android.widget.*;
 import java.util.*;
 
 public class KeyboardActivity extends Activity implements KeyboardLink.Listener {
+    public static final String EXTRA_FIXED_DESTINATION = "fixed_destination";
+    private boolean fixedDestination;
     private KeyboardLink link;
     private android.content.SharedPreferences prefs;
     private EditText text;
@@ -73,11 +75,12 @@ public class KeyboardActivity extends Activity implements KeyboardLink.Listener 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         prefs=getSharedPreferences("keyboard_destinations",MODE_PRIVATE);
         selected=state==null?prefs.getString("default",null):state.getString("selected");
+        fixedDestination=state==null?getIntent().getBooleanExtra(EXTRA_FIXED_DESTINATION,false):state.getBoolean("fixedDestination");
         boolean dark=(getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;
         background=Color.parseColor(dark?"#111521":"#F5F6FC"); surface=Color.parseColor(dark?"#202638":"#FFFFFF"); ink=Color.parseColor(dark?"#F2F4FF":"#172039"); muted=Color.parseColor(dark?"#B0B8D0":"#68738E");
         link=(KeyboardLink)getLastNonConfigurationInstance(); if(link==null) link=new KeyboardLink(this);
         buildUi();
-        if(state!=null) { text.setText(state.getString("text","")); autoPending=state.getBoolean("autoPending"); String pairingAddress=state.getString("pairingDevice"); if(pairingAddress!=null && adapter()!=null) pairingDevice=adapter().getRemoteDevice(pairingAddress); }
+        if(state!=null) { fixedDestination=state.getBoolean("fixedDestination"); text.setText(state.getString("text","")); autoPending=state.getBoolean("autoPending"); String pairingAddress=state.getString("pairingDevice"); if(pairingAddress!=null && adapter()!=null) pairingDevice=adapter().getRemoteDevice(pairingAddress); }
         else receive(getIntent());
         link.attach(this);
         if(!allowed()) requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT},10);
@@ -88,6 +91,8 @@ public class KeyboardActivity extends Activity implements KeyboardLink.Listener 
             if(extra!=null) { sharedText=extra.toString(); text.setText(sharedText); text.setVisibility(View.VISIBLE); send.setVisibility(View.VISIBLE); autoPending=true; }
 
         }
+        fixedDestination=intent.getBooleanExtra(EXTRA_FIXED_DESTINATION,false);
+        selected=prefs.getString("default",null);
         String address=intent.getStringExtra("computer"); if(address!=null && BluetoothAdapter.checkBluetoothAddress(address)) selected=address;
     }
     @Override public void onNewIntent(Intent intent) { super.onNewIntent(intent); if(link.isBusy()) { Toast.makeText(this,"Finish this send before sending another code",Toast.LENGTH_LONG).show(); return; } setIntent(intent); receive(intent); refresh(); maybeAutoSend(); }
@@ -117,7 +122,7 @@ public class KeyboardActivity extends Activity implements KeyboardLink.Listener 
     private void maybeAutoSend() { if(autoPending && allowed() && selected!=null && !link.isBusy()) { autoPending=false; transmit(); } }
     @Override public Object onRetainNonConfigurationInstance() { link.listener=null; return link; }
     @Override protected void onDestroy() { uiHandler.removeCallbacksAndMessages(null); if(link!=null) { if(!isChangingConfigurations()) link.close(); else link.listener=null; } super.onDestroy(); }
-    @Override protected void onSaveInstanceState(Bundle out) { super.onSaveInstanceState(out); out.putString("selected",selected); out.putString("text",text.getText().toString()); out.putBoolean("autoPending",autoPending); if(pairingDevice!=null) out.putString("pairingDevice",pairingDevice.getAddress()); }
+    @Override protected void onSaveInstanceState(Bundle out) { super.onSaveInstanceState(out); out.putBoolean("fixedDestination",fixedDestination); out.putString("selected",selected); out.putString("text",text.getText().toString()); out.putBoolean("autoPending",autoPending); if(pairingDevice!=null) out.putString("pairingDevice",pairingDevice.getAddress()); }
     private GradientDrawable round(int color,int radius) { GradientDrawable d=new GradientDrawable(); d.setColor(color); d.setCornerRadius(dp(radius)); return d; }
     private TextView label(String value,int size,int color) { TextView t=new TextView(this); t.setText(value); t.setTextSize(size); t.setTextColor(color); return t; }
     private Button button(String title,Runnable action) { Button b=new Button(this); b.setText(title); b.setAllCaps(false); b.setTextSize(16); b.setTextColor(ink); b.setBackground(round(surface,16)); b.setPadding(dp(16),0,dp(16),0); b.setMinimumHeight(dp(52)); b.setOnClickListener(v->action.run()); return b; }
@@ -138,9 +143,9 @@ public class KeyboardActivity extends Activity implements KeyboardLink.Listener 
             options.setOnMenuItemClickListener(item->{
                 if(item.getItemId()==2) { prefs.edit().putBoolean("showAll",!prefs.getBoolean("showAll",false)).apply(); refresh(); }
                 else if(item.getItemId()==3) {
-                    getSystemService(ClipboardManager.class).setPrimaryClip(ClipData.newPlainText("FreeOTP Plus diagnostics",link.diagnostics()));
+                    getSystemService(ClipboardManager.class).setPrimaryClip(ClipData.newPlainText("FreeOTP++ diagnostics",link.diagnostics()));
                     Toast.makeText(this,"Diagnostics copied",Toast.LENGTH_SHORT).show();
-                } else new AlertDialog.Builder(this).setTitle("Keyboard layout").setMessage("Use a US English keyboard layout with Caps Lock off on the receiving device. Printable ASCII, tabs, and line breaks are supported. No Enter is added automatically.").setPositiveButton("OK",null).show();
+                } else new AlertDialog.Builder(this).setTitle("Keyboard layout").setMessage("Use a US English keyboard layout with Caps Lock off on the receiving device. Printable ASCII, tabs, and line breaks are supported. Enter after a code is controlled in Advanced settings.").setPositiveButton("OK",null).show();
                 return true;
             }); options.show();
         });
@@ -177,10 +182,15 @@ public class KeyboardActivity extends Activity implements KeyboardLink.Listener 
     private List<BluetoothDevice> devices() {
         List<BluetoothDevice> list=new ArrayList<>();
         if(!allowed() || adapter()==null) return list;
-        for(BluetoothDevice device:adapter().getBondedDevices()) if(eligible(device)) list.add(device);
+        for(BluetoothDevice device:adapter().getBondedDevices())
+            if(fixedDestination ? device.getAddress().equals(selected) : eligible(device)) list.add(device);
         list.sort((a,b)->Long.compare(prefs.getLong("recent:"+b.getAddress(),0),prefs.getLong("recent:"+a.getAddress(),0))); return list;
     }
-    private BluetoothDevice current() { if(selected==null) return null; for(BluetoothDevice d:devices()) if(d.getAddress().equals(selected)) return d; return null; }
+    private BluetoothDevice current() {
+        if(selected==null || !allowed() || adapter()==null || !BluetoothAdapter.checkBluetoothAddress(selected)) return null;
+        BluetoothDevice device=adapter().getRemoteDevice(selected);
+        return device.getBondState()==BluetoothDevice.BOND_BONDED ? device : null;
+    }
     private void refresh() {
         if(targets==null) return;
         targets.removeAllViews();
@@ -194,9 +204,9 @@ public class KeyboardActivity extends Activity implements KeyboardLink.Listener 
         }
 
     }
-    private void select(BluetoothDevice d) { if(link.isBusy()) return; selected=d.getAddress(); prefs.edit().putString("default",selected).apply(); refresh(); maybeAutoSend(); }
+    private void select(BluetoothDevice d) { if(link.isBusy() || fixedDestination) return; selected=d.getAddress(); prefs.edit().putString("default",selected).apply(); refresh(); maybeAutoSend(); }
     private void choose() {
-        if(link.isBusy()) return;
+        if(link.isBusy() || fixedDestination) return;
         if(!allowed()) { requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT},10); return; }
         List<BluetoothDevice> list=devices();
         if(list.isEmpty()) { pair(); return; }
@@ -221,9 +231,10 @@ public class KeyboardActivity extends Activity implements KeyboardLink.Listener 
         dialog.getListView().setDividerHeight(dp(1));
     }
     private void pair() {
+        if(fixedDestination) { status.setText(getString(R.string.shortcut_fixed_device)); return; }
         if(link.isBusy()) return;
         new AlertDialog.Builder(this).setTitle("Pair a computer")
-            .setMessage("Make your computer visible in its Bluetooth settings, then find it from this phone. Keep FreeOTP Plus open during pairing.")
+            .setMessage("Make your computer visible in its Bluetooth settings, then find it from this phone. Keep FreeOTP++ open during pairing.")
             .setPositiveButton("Find computer",(d,w)->findComputer())
             .setNeutralButton("Make phone visible",(d,w)->makeVisible())
             .setNegativeButton("Cancel",null).show();
@@ -314,7 +325,10 @@ public class KeyboardActivity extends Activity implements KeyboardLink.Listener 
         if(!allowed()) { requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT},10); return; }
         if(adapter()==null) { status.setText("This phone has no Bluetooth adapter."); return; }
         if(!adapter().isEnabled()) { status.setText("Enable Bluetooth, then tap Send."); startActivity(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)); return; }
-        BluetoothDevice device=current(); if(device==null) { choose(); return; }
+        BluetoothDevice device=current(); if(device==null) {
+            if(fixedDestination) status.setText(getString(R.string.shortcut_device_missing)); else choose();
+            return;
+        }
         String value=text.getText().toString(); if(value.isEmpty()) { status.setText("Add some text first."); return; }
         try { link.send(device,value); } catch(IllegalArgumentException e) { status.setText(e.getMessage()); }
     }

@@ -51,7 +51,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
         boolean onSelectionToggled(ViewHolder holder);
         void onActivated(ViewHolder holder);
         void onShare(ViewHolder holder, String code);
-        boolean onStartupGenerationToggled(ViewHolder holder);
+        void onCreateShortcut(ViewHolder holder);
         void onDestinationToggled(ViewHolder holder, ShareRoute route);
     }
     private static final String LOGTAG = "Adapter";
@@ -75,7 +75,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
     private TextView mIssuer;
     private TextView mLabel;
     private TextView mCode;
-    private CheckBox mStartupGeneration, mKeyboard, mClipboard, mJelling;
+    private CheckBox mKeyboard, mClipboard, mJelling;
     private View mAutomationControls;
 
     private View mView;
@@ -213,7 +213,8 @@ class ViewHolder extends RecyclerView.ViewHolder {
         mShare = itemView.findViewById(R.id.share);
         mCode = itemView.findViewById(R.id.code);
         mView = itemView;
-        mStartupGeneration = itemView.findViewById(R.id.startup_generation);
+        ImageButton shortcut = itemView.findViewById(R.id.create_shortcut);
+        shortcut.setOnClickListener(v -> mEventListener.onCreateShortcut(this));
         mKeyboard = itemView.findViewById(R.id.destination_keyboard);
         mClipboard = itemView.findViewById(R.id.destination_clipboard);
         mJelling = itemView.findViewById(R.id.destination_jelling);
@@ -221,8 +222,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
         mKeyboard.setOnClickListener(v -> mEventListener.onDestinationToggled(this, ShareRoute.KEYBOARD));
         mClipboard.setOnClickListener(v -> mEventListener.onDestinationToggled(this, ShareRoute.CLIPBOARD));
         mJelling.setOnClickListener(v -> mEventListener.onDestinationToggled(this, ShareRoute.JELLING));
-        mStartupGeneration.setOnClickListener(v -> mStartupGeneration.setChecked(
-                mEventListener.onStartupGenerationToggled(ViewHolder.this)));
+
 
 
         mCountdown.setInterpolator(new LinearInterpolator());
@@ -291,14 +291,13 @@ class ViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    void bindAutomation(boolean startup, ShareRoute destination) {
+    void bindAutomation(ShareRoute destination) {
         mAutomationControls.setVisibility(View.VISIBLE);
-        mStartupGeneration.setChecked(startup);
         mKeyboard.setChecked(destination == ShareRoute.KEYBOARD); mKeyboard.setEnabled(android.os.Build.VERSION.SDK_INT >= 28);
         mClipboard.setChecked(destination == ShareRoute.CLIPBOARD); mClipboard.setEnabled(true);
         mJelling.setChecked(destination == ShareRoute.JELLING); mJelling.setEnabled(true);
-        CheckBox[] controls = {mStartupGeneration, mKeyboard, mClipboard, mJelling};
-        int[] labels = {R.string.auto_generate_startup, R.string.share_settings_keyboard,
+        CheckBox[] controls = {mKeyboard, mClipboard, mJelling};
+        int[] labels = {R.string.share_settings_keyboard,
                 R.string.share_settings_clipboard, R.string.share_settings_jelling};
         for (int i = 0; i < controls.length; i++) {
             String label = mView.getResources().getString(labels[i]);

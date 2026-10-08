@@ -41,6 +41,8 @@
         android:supportsRtl="true"
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/FreeOTP.Purple.NoActionBar">
+        <activity android:name=".shortcuts.ShortcutActivity" android:exported="true"
+            android:excludeFromRecents="true" />
         <activity android:name=".keyboard.KeyboardActivity" android:exported="false" android:launchMode="singleTop" />
         <activity android:name=".main.share.SharingSettingsActivity" android:exported="false" />
         <activity

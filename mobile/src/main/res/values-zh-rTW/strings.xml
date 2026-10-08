@@ -18,8 +18,8 @@
    - See the License for the specific language governing permissions and
    - limitations under the License.
    --><resources>
-    <string name="app_name">FreeOTP Plus</string>
-    <string name="app_welcome">歡迎使用 FreeOTP Plus</string>
+    <string name="app_name">FreeOTP++</string>
+    <string name="app_welcome">歡迎使用 FreeOTP++</string>
     <!-- Buttons -->
     <string name="ok">確認</string>
     <string name="done">完成</string>
@@ -46,9 +46,9 @@
     <!-- Strings related to camera errors. -->
     <string name="error_camera_open">開啟相機時發生錯誤！</string>
     <!-- Strings for the various dialogs. -->
-    <string name="main_about_title">FreeOTP Plus 版本 %1$s (%2$d)</string>
-    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP Plus 採用 &lt;a href=https://www.apache.org/licenses/LICENSE-2.0.html&gt;Apache 2.0&lt;/a&gt; 授權。&lt;br/&gt;&lt;br/&gt;如需更多資訊，請參閱我們的 &lt;a href=https://freeotp.github.io&gt;網站&lt;/a&gt;。</string>
-    <string name="main_welcome">歡迎使用 FreeOTP Plus！
+    <string name="main_about_title">FreeOTP++ 版本 %1$s (%2$d)</string>
+    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP++ 採用 &lt;a href=https://www.apache.org/licenses/LICENSE-2.0.html&gt;Apache 2.0&lt;/a&gt; 授權。&lt;br/&gt;&lt;br/&gt;如需更多資訊，請參閱我們的 &lt;a href=https://freeotp.github.io&gt;網站&lt;/a&gt;。</string>
+    <string name="main_welcome">歡迎使用 FreeOTP++！
 \n
 \n請新增一組動態密碼後開始使用。</string>
     <string name="main_deletion_title">要刪除選取的動態密碼嗎？</string>
@@ -78,7 +78,7 @@
 \n
 \n備份會使用下方提供的密碼加密。備份安全性取決於密碼強度。
 \n
-\nFreeOTP Plus 的安全模型規定，這組密碼日後無法變更。選擇密碼時請納入考量。</string>
+\nFreeOTP++ 的安全模型規定，這組密碼日後無法變更。選擇密碼時請納入考量。</string>
     <string name="password_match">密碼不一致！</string>
     <!-- Strings for Manual Add activity -->
     <string-array name="algorithms_array">
@@ -118,11 +118,11 @@
     <string name="backup_title">備份</string>
     <string name="restore_title">還原</string>
     <string name="backup_restore_title">備份和還原</string>
-    <string name="keystore_migration_explanation">FreeOTP Plus 的動態密碼現在已移轉到 Android Keystore！這可提升動態密碼金鑰的安全性，但金鑰資料無法匯出。
+    <string name="keystore_migration_explanation">FreeOTP++ 的動態密碼現在已移轉到 Android Keystore！這可提升動態密碼金鑰的安全性，但金鑰資料無法匯出。
 \n
 \n現在已新增備份與還原功能，確保日後可以還原動態密碼。系統會提示您建立主密碼，用來加密動態密碼備份。</string>
     <string name="manual_backup_explanation">此外，您也可以從 App 內將加密備份資料檔匯出到外部儲存空間。上方工具列選單現在包含「備份」和「還原」選項，可用來進行手動備份。</string>
-    <string name="google_auto_backup_link">FreeOTP Plus 可使用 Android 自動備份與還原功能。請參閱這篇 &lt;a href=https://support.google.com/android/answer/2819582\?hl=zh-Hant&gt;Google 說明&lt;/a&gt;，了解如何使用此備份方式。</string>
+    <string name="google_auto_backup_link">FreeOTP++ 可使用 Android 自動備份與還原功能。請參閱這篇 &lt;a href=https://support.google.com/android/answer/2819582\?hl=zh-Hant&gt;Google 說明&lt;/a&gt;，了解如何使用此備份方式。</string>
     <string name="backup_imageview">備份圖示</string>
     <string name="keystore_image">金鑰存放區圖示</string>
     <string name="android_keystore_title">Android Keystore</string>

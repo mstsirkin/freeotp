@@ -140,7 +140,7 @@ public class Activity extends AppCompatActivity
         mAutomationHandler.post(this::dispatchAutoShare);
     }
     @Override protected void onPause() { mAutomationResumed = false; super.onPause(); }
-    @Override protected void onDestroy() { mAutomationHandler.removeCallbacksAndMessages(null); super.onDestroy(); }
+    @Override protected void onDestroy() { mAutomationHandler.removeCallbacksAndMessages(null); if (mTokenAdapter != null) mTokenAdapter.close(); super.onDestroy(); }
     static final String SETTINGS = "settings";
     public static final String SORT_BY_MRU = "sortByMostRecentlyUsed";
 
@@ -291,6 +291,13 @@ public class Activity extends AppCompatActivity
                     Activity.this.onActivate(holder);
                 }
 
+                @Override public void onCreateShortcut(ViewHolder holder) {
+                    int position = holder.getAdapterPosition();
+                    if (position == RecyclerView.NO_POSITION) return;
+                    org.fedorahosted.freeotp.shortcuts.ShortcutDialog.newInstance(mTokenAdapter.uuidAt(position))
+                            .show(getSupportFragmentManager(), "create_shortcut");
+                }
+
                 @Override public void onCodeGenerated(String uuid, Code code) {
                     org.fedorahosted.freeotp.main.share.ShareRoute route = org.fedorahosted.freeotp.main.share.SharingSettings.destination(Activity.this, uuid);
                     if (route != org.fedorahosted.freeotp.main.share.ShareRoute.NONE) {
@@ -335,8 +342,6 @@ public class Activity extends AppCompatActivity
 
 
         int margin = getResources().getDimensionPixelSize(R.dimen.margin);
-        if (savedInstanceState == null)
-            mTokenAdapter.generateStartupCodes();
         mRecyclerView.setAdapter(mTokenAdapter);
         mRecyclerView.addItemDecoration(new GridLayoutItemDecoration(margin));
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

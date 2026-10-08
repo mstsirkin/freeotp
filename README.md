@@ -1,14 +1,14 @@
-[![Build Status](https://github.com/mstsirkin/freeotp/actions/workflows/build.yml/badge.svg?branch=freeotp-plus)](https://github.com/mstsirkin/freeotp/actions/workflows/build.yml)
+[![Build Status](https://github.com/mstsirkin/freeotp/actions/workflows/build.yml/badge.svg?branch=freeotp-plusplus)](https://github.com/mstsirkin/freeotp/actions/workflows/build.yml)
 
-# FreeOTP Plus
+# FreeOTP++
 
-FreeOTP Plus is a fork of [FreeOTP for Android](https://github.com/freeotp/freeotp-android),
-with account automation, Bluetooth keyboard sharing, and an HOTP backup fix.
+FreeOTP++ is a fork of [FreeOTP for Android](https://github.com/freeotp/freeotp-android),
+with per-account home-screen shortcuts, Bluetooth keyboard sharing, and an HOTP backup fix.
 It is a two-factor authentication application for systems utilizing one-time password
 protocols. Tokens can be added easily by scanning a QR code.
 
 This fork lives at [mstsirkin/freeotp](https://github.com/mstsirkin/freeotp), on the
-`freeotp-plus` branch. It is separate from the [FreeOTP+](https://github.com/helloworld1/FreeOTPPlus) project.
+`freeotp-plusplus` branch. It is separate from the [FreeOTP+](https://github.com/helloworld1/FreeOTPPlus) project.
 
 FreeOTP implements open standards:
 
@@ -38,7 +38,7 @@ Pull requests on GitHub are welcome under the Apache 2.0 license, see [CONTRIBUT
 
 ## Permissions
 
-FreeOTP Plus uses the following permissions, depending on the features you enable:
+FreeOTP++ uses the following permissions, depending on the features you enable:
 
 | Permission | Usage                    | Required | Permission type |
 |------------|--------------------------|----------|-----------------|
@@ -63,30 +63,49 @@ its issuer, account name, token type, algorithm, code length, and authentication
 requirement. TOTP accounts also show their period; HOTP accounts show the next counter.
 Viewing these properties does not generate a code or advance the counter.
 
-### Per-account startup generation and automatic sharing
+### Per-account home-screen shortcuts
 
-Each account has a compact row of controls:
+Tap the shortcut arrow on the right of an account to create a home-screen shortcut.
+Choose its label and destination: Bluetooth keyboard, clipboard, or Jelling. For
+keyboard sharing, choose **Use current default device** to follow future default
+device changes, or select a paired device to keep that shortcut tied to its Bluetooth
+address. **Load paired devices** requests Nearby devices permission when needed.
+A fixed-device shortcut does not change the default keyboard device or silently
+fall back to another device if its target is unavailable.
 
-* **Robot:** generate a code when the app starts.
-* **Keyboard:** automatically type newly generated codes on the selected Bluetooth destination.
-* **Clipboard:** automatically copy newly generated codes.
-* **Antenna (Jelling):** automatically send newly generated codes to a Jelling receiver.
+Customize the shortcut with an account color or a preset background color, and an
+account symbol, built-in symbol, or custom emoji. The preview shows your artwork;
+the launcher controls its final shape, app badge, and label length. Confirm
+**Add to Home screen** in the launcher. This requires Android 8 or later and a
+launcher that supports pinned shortcuts. Bluetooth keyboard sharing requires
+Android 9 or later.
 
-Choose one sharing destination per account, or none. Tap the selected destination
-to clear it. A selected destination applies both when you tap the account to generate
-a code and when it generates a code at startup. The Share button reuses that destination.
-Changing these controls never generates a code or advances HOTP.
+Tapping the shortcut generates a fresh code for that account and sends it to the
+shortcut's destination. Protected accounts still require authentication. The
+shortcut uses its own destination, independently of the account's sharing selection,
+and obeys the global transport switches in Advanced settings. Keyboard sharing
+opens its foreground send screen; Jelling discovers receivers as described below.
+If no default keyboard device is configured, you are asked to choose one before a
+code is generated. Returning from authentication or recreating a send screen does
+not generate an additional code. Failed sends are not retried automatically.
 
-Manual accounts may use the same sharing destination. Among accounts enabled for
-startup generation, each destination can belong to only one account. Selecting a
-conflicting configuration keeps the latest choice and disables startup generation
-on the other account, preserving its destination and showing an explanation.
-Multiple accounts without a sharing destination may generate at startup.
+The launcher intent contains an opaque shortcut ID; the account and destination
+configuration stay in the app. Shortcuts contain no OTP secret or pre-generated
+code. Deleting an account disables its shortcuts. Shortcut configurations are local
+to the installation and are not included in token backups; recreate shortcuts after
+restoring to a new installation.
 
-Startup generation runs once on a fresh activity launch, rather than every return
-from settings or sharing. Protected accounts still require authentication. Clipboard
-startup delivery runs first; keyboard and Jelling sessions are queued. Expired queued
-codes are discarded without generating replacements. Automatic sends are not retried.
+Startup generation and its robot control have been removed. Opening FreeOTP++
+no longer generates codes automatically, including for previously selected startup
+accounts. Create a shortcut for an explicit generate-and-send action instead.
+
+### Per-account automatic sharing
+
+The keyboard, clipboard, and antenna (Jelling) controls above each account select
+one automatic sharing destination, or none. Tap a selected destination to clear it.
+When you tap the account to generate a code, it sends to that destination; the Share
+button reuses it. Multiple accounts may use the same destination. Changing these
+controls does not generate a code or advance HOTP.
 
 ### Sharing settings and direct sharing
 
@@ -143,10 +162,14 @@ automatically authorizes incoming classic Bluetooth HID connections from selecte
 paired devices while rejecting their other service authorization requests, so you
 can allow keyboard reconnections without whole-device trust.
 
-### FreeOTP Plus branding
+### FreeOTP++ branding
 
 App names, welcome screens, backup prompts, About text, and launcher and in-app
-logos identify this fork as FreeOTP Plus. Upstream attribution and links are retained.
+logos identify this fork as FreeOTP++. The launcher and in-app icons have a plus
+in each of their four corners. Release versions use `plusplus`, for example
+`2.0.6-plusplus.9`. The existing application ID and signing identity are retained
+so this version updates the earlier FreeOTP Plus installation and keeps its accounts.
+Upstream attribution and links are retained.
 
 ## Bugfixes
 
@@ -165,18 +188,18 @@ current counters.
 **Restoring an upstream FreeOTP backup:** HOTP backups made by classic upstream
 FreeOTP have broken counter metadata. If you restore affected HOTP accounts from
 such a backup, you must re-register those accounts with their services. Restoring
-the old backup in FreeOTP Plus cannot recover the missing counter updates. TOTP
+the old backup in FreeOTP++ cannot recover the missing counter updates. TOTP
 backups work normally and do not require re-registration because of this bug.
 
-**Restoring a FreeOTP Plus backup:** backups made by this fork preserve the current
-HOTP counters and can be restored in either FreeOTP Plus or upstream FreeOTP. The
+**Restoring a FreeOTP++ backup:** backups made by this fork preserve the current
+HOTP counters and can be restored in either FreeOTP++ or upstream FreeOTP. The
 backup format remains compatible. If you subsequently generate HOTP codes in
 upstream FreeOTP, its backup-counter bug still applies to backups it creates.
 
 ## Release tags
 
-Tags for this fork use `plus-<upstream-version>-<fork-revision>`, for example
-`plus-2.0.6-7` for app version `2.0.6-plus.7`. The `plus-` prefix distinguishes
+Tags for this fork use `plusplus-<upstream-version>-<fork-revision>`, for example
+`plusplus-2.0.6-9` for app version `2.0.6-plusplus.9`. The `plusplus-` prefix distinguishes
 this fork's releases from upstream tags.
 
 ## Personal release build

@@ -1,4 +1,4 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@drawable/ic_freeotp_logo_base" />
-    <item android:drawable="@drawable/ic_plus_badge_legacy" />
+    <item android:drawable="@drawable/ic_plusplus_badges_legacy" />
 </layer-list>

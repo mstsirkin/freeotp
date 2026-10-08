@@ -46,7 +46,7 @@ public final class KeyboardLink implements BluetoothProfile.ServiceListener {
         events.addLast(SystemClock.elapsedRealtime()+" " + value);
     }
     public String diagnostics() {
-        StringBuilder result=new StringBuilder("FreeOTP Plus keyboard 2.0.6-plus.7\nAndroid API "+android.os.Build.VERSION.SDK_INT+"\n");
+        StringBuilder result=new StringBuilder("FreeOTP++ keyboard " + org.fedorahosted.freeotp.BuildConfig.VERSION_NAME + "\nAndroid API "+android.os.Build.VERSION.SDK_INT+"\n");
         for(String event:events) result.append(event).append('\n');
         return result.toString(); // No text, key values, or Bluetooth addresses.
     }
@@ -85,7 +85,7 @@ public final class KeyboardLink implements BluetoothProfile.ServiceListener {
     private void register() {
         if(registering || registered || closed) return;
         trace("Register keyboard"); registering=true;
-        if(!hid.registerApp(new BluetoothHidDeviceAppSdpSettings("FreeOTP Plus","Text keyboard","FreeOTP Plus",BluetoothHidDevice.SUBCLASS1_KEYBOARD,DESCRIPTOR),null,null,callbackExecutor,callback)) {
+        if(!hid.registerApp(new BluetoothHidDeviceAppSdpSettings("FreeOTP++","Text keyboard","FreeOTP++",BluetoothHidDevice.SUBCLASS1_KEYBOARD,DESCRIPTOR),null,null,callbackExecutor,callback)) {
             registering=false;
             fail("Could not register Bluetooth keyboard mode. Close other keyboard apps, then retry.");
         }
@@ -108,7 +108,7 @@ public final class KeyboardLink implements BluetoothProfile.ServiceListener {
                 else state("Keyboard ready");
                 if(listener!=null) listener.ready();
             } else if(!ok) {
-                if(busy) fail("Keyboard session ended. Keep FreeOTP Plus visible and retry.");
+                if(busy) fail("Keyboard session ended. Keep FreeOTP++ visible and retry.");
                 else state("Keyboard session ended. Tap Send to register again.");
             }
         }); }

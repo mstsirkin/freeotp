@@ -43,7 +43,6 @@ import com.google.gson.reflect.TypeToken;
 import org.fedorahosted.freeotp.Code;
 import org.fedorahosted.freeotp.main.share.SharingSettings;
 import org.fedorahosted.freeotp.main.share.ShareRoute;
-import android.widget.Toast;
 import org.fedorahosted.freeotp.TokenIcon;
 import org.fedorahosted.freeotp.R;
 import org.fedorahosted.freeotp.Token;
@@ -80,7 +79,7 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
     private TokenPersistence mTokenBackup;
 
     private final SharedPreferences mSharedPreferences;
-    private final SharedPreferences mStartupSettings;
+    private final SharedPreferences mAccountSettings;
     private final List<String> mItems;
     private final KeyStore mKeyStore;
     private Context mContext;
@@ -129,10 +128,11 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
 
     public Adapter(Context context, EventListener listener) throws GeneralSecurityException, IOException {
         super(listener);
+        mContext = context;
         setHasStableIds(true);
 
         mSharedPreferences = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
-        mStartupSettings = context.getSharedPreferences(Activity.SETTINGS, Context.MODE_PRIVATE);
+        mAccountSettings = context.getSharedPreferences(Activity.SETTINGS, Context.MODE_PRIVATE);
         mKeyStore = KeyStore.getInstance("AndroidKeyStore");
         mKeyStore.load(null);
 
@@ -149,15 +149,12 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         }
 
         compat(context);
-        // Preserve enabled startup selections; dormant legacy selections stay dormant.
-        if (!mStartupSettings.getBoolean("accountAutomationV2", false)) {
-            SharedPreferences.Editor migration = mStartupSettings.edit();
-            if (!mStartupSettings.getBoolean("autoGenerateStartup", false))
-                for (String uuid : mItems) migration.remove("startupAccount:" + uuid);
-            // The old automatic share used a chooser, so no destination can be inferred safely.
-            migration.remove("autoShareAccount").remove("autoShareEnabled")
-                    .remove("autoGenerateStartup").putBoolean("accountAutomationV2", true).apply();
-        }
+        // Startup generation has been retired. Never revive dormant selections on upgrade.
+        SharedPreferences.Editor cleanup = mAccountSettings.edit();
+        for (String name : mAccountSettings.getAll().keySet())
+            if (name.startsWith("startupAccount:")) cleanup.remove(name);
+        cleanup.remove("autoGenerateStartup").remove("autoShareAccount")
+                .remove("autoShareEnabled").apply();
     }
 
     @Override
@@ -188,8 +185,7 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         Log.i(LOGTAG, String.format("Bind to view token [%s][%s]", token.getIssuer(), token.getLabel()));
         holder.bind(token, token_icon.mColor, image.first, image.second,
                 mActive.get(getItemId(position)), isSelected(position), token.getType());
-        holder.bindAutomation(mStartupSettings.getBoolean("startupAccount:" + uuid, false),
-                SharingSettings.destination(mStartupSettings, uuid));
+        holder.bindAutomation(SharingSettings.destination(mAccountSettings, uuid));
     }
 
     @Override
@@ -255,8 +251,8 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
             mTokenBackup.remove(uuid);
         }
 
-        mStartupSettings.edit().remove("startupAccount:" + uuid)
-                .remove("accountDestination:" + uuid).apply();
+        mAccountSettings.edit().remove("accountDestination:" + uuid).apply();
+        org.fedorahosted.freeotp.shortcuts.AccountShortcuts.removeAccount(mContext, uuid);
         notifyItemRemoved(position);
         mKeyStore.deleteEntry(uuid);
     }
@@ -325,65 +321,37 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         }
     }
 
-    private void configureAccount(String uuid, ShareRoute route, boolean startup) {
-        Map<String, AccountAutomation.State> accounts = new java.util.LinkedHashMap<>();
-        for (String id : mItems) accounts.put(id, new AccountAutomation.State(
-                SharingSettings.destination(mStartupSettings, id), mStartupSettings.getBoolean("startupAccount:" + id, false)));
-        List<String> disabled = AccountAutomation.configure(accounts, uuid, route, startup);
-        SharedPreferences.Editor editor = mStartupSettings.edit();
-        for (Map.Entry<String, AccountAutomation.State> entry : accounts.entrySet()) {
-            editor.putBoolean("startupAccount:" + entry.getKey(), entry.getValue().startup);
-            editor.putString("accountDestination:" + entry.getKey(), entry.getValue().destination.name());
-        }
-        editor.apply();
-        for (String id : disabled) {
-            Token token = Token.deserialize(mSharedPreferences.getString(id, null));
-            String label = token == null ? id : token.getIssuer() + " " + token.getLabel();
-            Toast.makeText(mContext, mContext.getString(R.string.startup_destination_conflict, label.trim()), Toast.LENGTH_SHORT).show();
-        }
-        notifyItemRangeChanged(0, getItemCount());
-    }
-
-    @Override public boolean onStartupGenerationToggled(ViewHolder holder) {
-        int position = holder.getAdapterPosition();
-        if (position == RecyclerView.NO_POSITION) return false;
-        String uuid = mItems.get(position);
-        boolean enabled = !mStartupSettings.getBoolean("startupAccount:" + uuid, false);
-        configureAccount(uuid, SharingSettings.destination(mStartupSettings, uuid), enabled);
-        return enabled;
-    }
-
     @Override public void onDestinationToggled(ViewHolder holder, ShareRoute route) {
         int position = holder.getAdapterPosition();
         if (position == RecyclerView.NO_POSITION) return;
         String uuid = mItems.get(position);
-        if (SharingSettings.destination(mStartupSettings, uuid) == route) route = ShareRoute.NONE;
-        configureAccount(uuid, route, mStartupSettings.getBoolean("startupAccount:" + uuid, false));
+        if (SharingSettings.destination(mAccountSettings, uuid) == route) route = ShareRoute.NONE;
+        mAccountSettings.edit().putString("accountDestination:" + uuid, route.name()).apply();
+        notifyItemChanged(position);
     }
 
-    public ShareRoute destinationAt(int position) { return SharingSettings.destination(mStartupSettings, mItems.get(position)); }
+    @Override public void onCreateShortcut(ViewHolder holder) {}
+
+    public String uuidAt(int position) { return mItems.get(position); }
+    public int positionOf(String uuid) { return mItems.indexOf(uuid); }
+    public void close() { mHandler.removeCallbacksAndMessages(null); }
+
+    public ShareRoute destinationAt(int position) { return SharingSettings.destination(mAccountSettings, mItems.get(position)); }
 
     public void onCodeGenerated(String uuid, Code code) {}
-
-    public void generateStartupCodes() {
-        for (int position = 0; position < getItemCount(); position++) {
-            if (!mStartupSettings.getBoolean("startupAccount:" + mItems.get(position), false))
-                continue;
-            try {
-                getCode(position, false);
-            } catch (UserNotAuthenticatedException | KeyPermanentlyInvalidatedException e) {
-                // Preserve authentication requirements and the existing manual unlock flow.
-                Log.i(LOGTAG, "Startup generation skipped a protected account", e);
-            }
-        }
-    }
 
     public Code getCode(int position)
             throws UserNotAuthenticatedException, KeyPermanentlyInvalidatedException {
         return getCode(position, true);
     }
 
-    private Code getCode(int position, boolean recordUsage)
+    public Code getCodeForShortcut(int position)
+            throws UserNotAuthenticatedException, KeyPermanentlyInvalidatedException {
+        // A shortcut's destination is independent of the account's automatic sharing route.
+        return getCode(position, false);
+    }
+
+    private Code getCode(int position, boolean notifySharing)
             throws UserNotAuthenticatedException, KeyPermanentlyInvalidatedException {
         String uuid = mItems.get(position);
         Code code;
@@ -404,8 +372,7 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
             }
             Key key = mKeyStore.getKey(uuid, null);
             code = token.getCode(key);
-            if (recordUsage)
-                token.setLastUsed(System.currentTimeMillis());
+            token.setLastUsed(System.currentTimeMillis());
             String metadata = token.serialize();
             mSharedPreferences.edit().putString(uuid, metadata).apply();
             if (mTokenBackup != null)
@@ -442,7 +409,7 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
 
         Log.i(LOGTAG, String.format("getCode: returning code"));
 
-        onCodeGenerated(uuid, code);
+        if (notifySharing) onCodeGenerated(uuid, code);
         return code;
     }
 

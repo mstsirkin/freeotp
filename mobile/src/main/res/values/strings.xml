@@ -19,8 +19,8 @@
    -->
 
 <resources>
-    <string name="app_name">FreeOTP Plus</string>
-    <string name="app_welcome">Welcome to FreeOTP Plus</string>
+    <string name="app_name">FreeOTP++</string>
+    <string name="app_welcome">Welcome to FreeOTP++</string>
 
     <!-- Buttons -->
     <string name="ok">Ok</string>
@@ -55,9 +55,9 @@
     <string name="error_camera_open">Error while opening camera!</string>
 
     <!-- Strings for the various dialogs. -->
-    <string name="main_about_title">FreeOTP Plus Version %1$s (%2$d)</string>
-    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP Plus is licensed under &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;Apache 2.0&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;For more information, see our &lt;a href=&quot;https://freeotp.github.io&quot;&gt;website&lt;/a&gt;.</string>
-    <string name="main_welcome">Welcome to FreeOTP Plus!\n\nAdd a token to get started.</string>
+    <string name="main_about_title">FreeOTP++ Version %1$s (%2$d)</string>
+    <string name="main_about_message">Copyright Red Hat&lt;br/&gt;&lt;br/&gt;FreeOTP++ is licensed under &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;Apache 2.0&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;For more information, see our &lt;a href=&quot;https://freeotp.github.io&quot;&gt;website&lt;/a&gt;.</string>
+    <string name="main_welcome">Welcome to FreeOTP++!\n\nAdd a token to get started.</string>
     <string name="main_deletion_title">Delete selected tokens?</string>
     <string name="main_deletion_message">Deleting a token does not disable it on the server. If you continue, you may be locked out of your account. Deleting a token cannot be undone.</string>
     <string name="main_unsafe_title">Token is unsafe!</string>
@@ -82,7 +82,7 @@
     <!-- Strings for the password activity. -->
     <string name="password">Password</string>
     <string name="password_confirm">Confirm Password</string>
-    <string name="password_info">Token backups allow you to recover from data loss and effortlessly transfer your tokens to a new device.\n\nBackups are encrypted using the password provided below. The security of your backups depends on a strong password.\n\nThe FreeOTP Plus security model dictates this password CANNOT be changed at a later time. Please take this into consideration when choosing a password.</string>
+    <string name="password_info">Token backups allow you to recover from data loss and effortlessly transfer your tokens to a new device.\n\nBackups are encrypted using the password provided below. The security of your backups depends on a strong password.\n\nThe FreeOTP++ security model dictates this password CANNOT be changed at a later time. Please take this into consideration when choosing a password.</string>
     <string name="password_match">Passwords do not match!</string>
 
     <!-- Strings for Manual Add activity -->
@@ -126,9 +126,9 @@
     <string name="restore_title">Restore</string>
     <string name="backup_restore_title">Backup and Restore</string>
     <string name="backup_toast">Backup file saved to external storage</string>
-    <string name="keystore_migration_explanation">FreeOTP Plus tokens are now migrated into the Android Keystore! This results in increased security of token secrets, however key material is non-exportable. \n\nBackup and restore functionality is now added to ensure tokens can be recovered. You will be prompted to create a master password to setup encrypted token backups.</string>
+    <string name="keystore_migration_explanation">FreeOTP++ tokens are now migrated into the Android Keystore! This results in increased security of token secrets, however key material is non-exportable. \n\nBackup and restore functionality is now added to ensure tokens can be recovered. You will be prompted to create a master password to setup encrypted token backups.</string>
     <string name="manual_backup_explanation">Alternatively, an encrypted backup data file can be exported to external storage from within the App. The top toolbar menu now contains items labeled \'Backup\' and \'Restore\' to utilize this manual backup method.</string>
-    <string name="google_auto_backup_link">FreeOTP Plus can participate in Android automatic backup and restore functionality. This &lt;a href=&quot;https://support.google.com/android/answer/2819582?hl=en&quot;&gt;Google link&lt;/a&gt; contains information on how to utilize this backup method.</string>
+    <string name="google_auto_backup_link">FreeOTP++ can participate in Android automatic backup and restore functionality. This &lt;a href=&quot;https://support.google.com/android/answer/2819582?hl=en&quot;&gt;Google link&lt;/a&gt; contains information on how to utilize this backup method.</string>
     <string name="backup_imageview">backup imageView</string>
     <string name="keystore_image">keystore image</string>
     <string name="android_keystore_title">Android Keystore</string>
@@ -141,9 +141,6 @@
     <string name="token_info_counter">\nNext counter: %1$d</string>
     <string name="token_info_yes">Yes</string>
     <string name="token_info_no">No</string>
-    <string name="auto_generate_startup">Generate codes on startup</string>
-    <string name="startup_account_description">Generate code on startup for %1$s, %2$s</string>
-    <string name="startup_generation_symbol" translatable="false">🤖</string>
     <string name="share_settings_menu">⚙ Advanced settings ▶</string>
     <string name="share_settings_title">Advanced settings</string>
     <string name="share_settings_back">Back</string>
@@ -163,11 +160,42 @@
     <string name="share_jelling_no_receivers">No Jelling receiver found. Keep the receiver running on your computer.</string>
     <string name="share_jelling_sent">Code sent</string>
     <string name="share_jelling_failed">Sending failed. Check for partial input before trying again.</string>
-    <string name="automation_title">Account automation</string>
-    <string name="auto_share_generated">Auto-share generated codes</string>
-    <string name="auto_share_account_description">Auto-share generated codes for %1$s, %2$s</string>
-    <string name="startup_account_control">🤖 Generate on startup</string>
-    <string name="auto_share_account_control">Share automatically</string>
-    <string name="startup_destination_conflict">Startup generation disabled for %1$s: another account uses the same destination.</string>
     <string name="share_destination_disabled">This sharing destination is disabled in Advanced settings.</string>
+    <string name="shortcut_create">Create shortcut</string>
+    <string name="shortcut_add">Add to Home screen</string>
+    <string name="shortcut_explanation">Generate a fresh code and send it when you tap this shortcut. Protected accounts still require authentication.</string>
+    <string name="shortcut_name">Shortcut name</string>
+    <string name="shortcut_destination">Destination</string>
+    <string name="shortcut_keyboard_device">Keyboard device</string>
+    <string name="shortcut_default_device">Use current default device</string>
+    <string name="shortcut_load_devices">Load paired devices</string>
+    <string name="shortcut_unnamed_device">Unnamed device</string>
+    <string name="shortcut_color">Background color</string>
+    <string name="shortcut_icon">Icon</string>
+    <string name="shortcut_custom_emoji">Custom emoji or symbol</string>
+    <string name="shortcut_emoji_hint">Enter an emoji or short symbol</string>
+    <string name="shortcut_launcher_badge">Your launcher controls the final icon shape, app badge, and label length.</string>
+    <string name="shortcut_name_required">Enter a shortcut name.</string>
+    <string name="shortcut_emoji_required">Enter an emoji or symbol.</string>
+    <string name="shortcut_not_supported">Adding shortcuts requires Android 8 or later and a launcher that supports pinned shortcuts.</string>
+    <string name="shortcut_create_failed">Could not create the shortcut. Please try again.</string>
+    <string name="shortcut_account_missing">This shortcut is unavailable. Open FreeOTP++ and create a new shortcut for an existing account.</string>
+    <string name="shortcut_sending">Preparing to send code…</string>
+    <string name="shortcut_not_repeated">The code was generated for this invocation. To send a fresh code, tap the home-screen shortcut again.</string>
+    <string name="shortcut_auth_cancelled">Authentication cancelled. No code was generated.</string>
+    <string name="shortcut_auth_failed">Could not unlock this account. Open FreeOTP++ to check its authentication settings.</string>
+    <string name="shortcut_bluetooth_permission">Allow Nearby devices permission to use Bluetooth keyboard destinations.</string>
+    <string name="shortcut_bluetooth_off">Bluetooth was not enabled. No code was generated.</string>
+    <string name="shortcut_no_bluetooth">This phone has no Bluetooth adapter.</string>
+    <string name="shortcut_choose_default">Choose a default keyboard device first. No code has been generated.</string>
+    <string name="shortcut_fixed_device">This shortcut uses a fixed keyboard device. Create another shortcut to use a different device.</string>
+    <string name="shortcut_device_missing">The selected keyboard device is no longer paired. Pair it again or create a new shortcut.</string>
+    <string-array name="shortcut_colors">
+        <item>Account color</item><item>Indigo</item><item>Teal</item><item>Pink</item>
+        <item>Purple</item><item>Orange</item><item>Slate</item>
+    </string-array>
+    <string-array name="shortcut_symbols">
+        <item>Account symbol</item><item>Keyboard</item><item>Key</item><item>Star</item>
+        <item>Shield</item><item>Custom emoji or symbol</item>
+    </string-array>
 </resources>
