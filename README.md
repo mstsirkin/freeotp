@@ -167,6 +167,12 @@ HOTP counters and can be restored in either FreeOTP Plus or upstream FreeOTP. Th
 backup format remains compatible. If you subsequently generate HOTP codes in
 upstream FreeOTP, its backup-counter bug still applies to backups it creates.
 
+## Release tags
+
+Tags for this fork use `plus-<upstream-version>-<fork-revision>`, for example
+`plus-2.0.6-7` for app version `2.0.6-plus.7`. The `plus-` prefix distinguishes
+this fork's releases from upstream tags.
+
 ## Personal release build
 
 The personal release is built with
