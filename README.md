@@ -129,8 +129,14 @@ for incoming reconnections. Failed sends preserve the code for manual retry. Che
 for partial input before retrying; partial sends are not retried automatically.
 Physical phone/computer testing remains required for this integration.
 
-If you want to use the phone as a Bluetooth keyboard while keeping calls and media
-audio on the phone, see [btkeyboardonly](https://github.com/mstsirkin/btkeyboardonly)
+If you use your phone as a Bluetooth keyboard but do not want calls or media audio
+routed to the computer, first check your phone's per-device Bluetooth settings.
+On Redmi, go to **Bluetooth → More settings → right arrow beside the computer**,
+then turn off **Call audio** and **Media audio**. The phone stays paired for keyboard
+use, while audio stays on the phone. Settings vary by phone.
+
+If those settings aren't available, or you want to enforce the restriction from
+the computer, see [btkeyboardonly](https://github.com/mstsirkin/btkeyboardonly)
 for Linux setup instructions. With BlueZ and Blueman, trusting the entire phone can
 also allow its audio services and route sound to the computer. `btkeyboardonly`
 automatically authorizes incoming classic Bluetooth HID connections from selected
