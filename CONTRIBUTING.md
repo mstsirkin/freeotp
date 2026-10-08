@@ -1,5 +1,27 @@
 # Contributing Guide
 
+## Android emulator tests
+
+For an existing API 35 `freeotp_shortcuts_test` AVD, start the headless emulator with:
+
+```bash
+tools/start-test-emulator.sh
+```
+
+Pass another AVD name as the first argument, followed by any extra emulator options.
+The launcher honors `ANDROID_HOME`/`ANDROID_SDK_ROOT` and `ANDROID_AVD_HOME`, and
+finds AVDs under the XDG Android directory when present. It uses host OpenGL,
+disables Vulkan and snapshots, and keeps KVM acceleration enabled. This avoids a
+SwiftShader GLES startup segmentation fault observed with emulator 36.4.9 on Linux.
+Set `EMULATOR_GPU` to override the graphics backend for another machine.
+
+Once `adb shell getprop sys.boot_completed` prints `1`, run the feature tests:
+
+```bash
+./gradlew :mobile:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=org.fedorahosted.freeotp.icons.FaviconAccountTest,org.fedorahosted.freeotp.shortcuts.AccountShortcutsTest
+```
+
 ## Pull Requests
 
 Pull requests (PRs) on GitHub are welcome under the Apache 2.0 license, see [COPYING](COPYING).
