@@ -125,9 +125,17 @@ interrupted code does not send the trailing Enter. Clipboard and Jelling are una
 
 Numbers are normally unaffected by keyboard language changes; letters and symbols
 require a US English layout with Caps Lock off. Linux must authorize keyboard access
-and trust the phone for incoming reconnections. Failed sends preserve the code for
-manual retry. Check for partial input before retrying; partial sends are not retried
-automatically. Physical phone/computer testing remains required for this integration.
+for incoming reconnections. Failed sends preserve the code for manual retry. Check
+for partial input before retrying; partial sends are not retried automatically.
+Physical phone/computer testing remains required for this integration.
+
+If you want to use the phone as a Bluetooth keyboard while keeping calls and media
+audio on the phone, see [btkeyboardonly](https://github.com/mstsirkin/btkeyboardonly)
+for Linux setup instructions. With BlueZ and Blueman, trusting the entire phone can
+also allow its audio services and route sound to the computer. `btkeyboardonly`
+automatically authorizes incoming classic Bluetooth HID connections from selected
+paired devices while rejecting their other service authorization requests, so you
+can allow keyboard reconnections without whole-device trust.
 
 ### FreeOTP Plus branding
 
@@ -147,6 +155,17 @@ metadata from the current accounts before exporting a backup. Export also repair
 stale metadata left by older versions, without changing the encrypted secrets.
 Previously exported backup files are unchanged; export a new backup to capture the
 current counters.
+
+**Restoring an upstream FreeOTP backup:** HOTP backups made by classic upstream
+FreeOTP have broken counter metadata. If you restore affected HOTP accounts from
+such a backup, you must re-register those accounts with their services. Restoring
+the old backup in FreeOTP Plus cannot recover the missing counter updates. TOTP
+backups work normally and do not require re-registration because of this bug.
+
+**Restoring a FreeOTP Plus backup:** backups made by this fork preserve the current
+HOTP counters and can be restored in either FreeOTP Plus or upstream FreeOTP. The
+backup format remains compatible. If you subsequently generate HOTP codes in
+upstream FreeOTP, its backup-counter bug still applies to backups it creates.
 
 ## Personal release build
 
