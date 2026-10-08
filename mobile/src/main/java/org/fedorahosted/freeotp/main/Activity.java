@@ -367,10 +367,11 @@ public class Activity extends AppCompatActivity
             String account = bundle.getString("account");
             String issuer = bundle.getString("issuer");
 
-            int selected = mTokenAdapter.getSelected().first();
+            int selected = mTokenAdapter.positionOf(bundle.getString("uuid"));
+            if (selected < 0) return;
 
             try {
-                mTokenAdapter.setLabel(selected, account, issuer);
+                mTokenAdapter.editAccount(selected, account, issuer, bundle.getString("icon"));
                 mTokenAdapter.notifyItemChanged(selected);
             } catch (IOException e) {
                 Log.e(LOGTAG, "Exception", e);
@@ -521,7 +522,9 @@ public class Activity extends AppCompatActivity
                 int color = token_icon.mColor;
 
                 EditTokenDialogFragment edit = EditTokenDialogFragment.newInstance(label.first,
-                        label.second, image.first, image.second, color);
+                        label.second, image.first, color, mTokenAdapter.uuidAt(selected),
+                        mTokenAdapter.getTokenInfo(selected).getImage(),
+                        mTokenAdapter.getTokenInfo(selected).getIconOverride());
                 edit.show(getSupportFragmentManager(), edit.getTag());
 
                 return true;

@@ -250,7 +250,10 @@ public class ShortcutDialog extends DialogFragment {
         paint.setColor(background);
         if (adaptive) canvas.drawColor(background); else canvas.drawCircle(96, 96, 96, paint);
         if (symbol.getSelectedItemPosition() == 0) {
-            Drawable drawable = ContextCompat.getDrawable(requireContext(), accountIcon.mImage.first);
+            Bitmap custom = TokenIcon.embeddedImage(accountIcon.mImage.second);
+            Drawable drawable = custom == null
+                    ? ContextCompat.getDrawable(requireContext(), accountIcon.mImage.first)
+                    : new android.graphics.drawable.BitmapDrawable(getResources(), custom);
             if (drawable != null) { drawable.setBounds(48, 48, 144, 144); drawable.draw(canvas); }
         } else {
             String glyph = symbol.getSelectedItemPosition() == 5 ? emoji.getText().toString().trim() : symbols[symbol.getSelectedItemPosition()];

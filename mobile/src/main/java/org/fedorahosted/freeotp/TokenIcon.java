@@ -23,11 +23,43 @@ package org.fedorahosted.freeotp;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Pair;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
 public class TokenIcon {
+    public static final String PNG_PREFIX = "data:image/png;base64,";
+
+    public static Bitmap embeddedImage(String image) {
+        if (image == null || !image.startsWith(PNG_PREFIX) || image.length() > 128 * 1024) return null;
+        try {
+            byte[] bytes = Base64.decode(image.substring(PNG_PREFIX.length()), Base64.DEFAULT);
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.length, bounds);
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0
+                    || bounds.outWidth > 128 || bounds.outHeight > 128) return null;
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        } catch (IllegalArgumentException e) { return null; }
+    }
+
+    public static void load(ImageView view, int fallback, String image) {
+        Picasso.get().cancelRequest(view);
+        view.setImageResource(fallback);
+        if (image == null || image.isEmpty()) return;
+        if (image.startsWith(PNG_PREFIX)) {
+            Bitmap bitmap = embeddedImage(image);
+            if (bitmap != null) view.setImageBitmap(bitmap);
+        } else {
+            Picasso.get().load(image).placeholder(fallback).error(fallback).into(view);
+        }
+    }
     public Pair<Integer, String> mImage;
     public int mColor;
     private Context mContext;
@@ -78,7 +110,7 @@ public class TokenIcon {
     }
 
     private Pair<Integer, String> getImage(Token token) {
-        String url = token.getImage();
+        String url = token.getDisplayImage();
         int id = 0;
         id = getIdentifier("drawable", "fa_", token);
         if (id == 0) {

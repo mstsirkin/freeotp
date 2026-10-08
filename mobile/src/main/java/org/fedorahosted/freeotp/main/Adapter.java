@@ -432,12 +432,13 @@ public class Adapter extends SelectableAdapter<ViewHolder> implements ViewHolder
         return new TokenIcon(token, mContext);
     }
 
-    public void setLabel(int position, String account, String issuer) throws IOException {
+    public void editAccount(int position, String account, String issuer, String icon) throws IOException {
         String uuid = mItems.get(position);
         Token token = Token.deserialize(mSharedPreferences.getString(uuid, null));
 
         token.setIssuer(issuer);
         token.setLabel(account);
+        token.setIconOverride(icon);
 
         // Save everything else.
         if (!storeItems().putString(uuid, token.serialize()).commit()) {

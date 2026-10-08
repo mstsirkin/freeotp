@@ -43,6 +43,7 @@ import org.fedorahosted.freeotp.main.share.ShareRoute;
 import org.fedorahosted.freeotp.Code;
 import org.fedorahosted.freeotp.R;
 import org.fedorahosted.freeotp.Token;
+import org.fedorahosted.freeotp.TokenIcon;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -273,13 +274,8 @@ class ViewHolder extends RecyclerView.ViewHolder {
         mImage.setBackgroundColor(color);
         mImageActive.setBackgroundColor(color);
 
-        if (image_url == null || image_url.isEmpty()) {
-            mImage.setImageResource(image_id);
-            mImageActive.setImageResource(image_id);
-        } else {
-            Picasso.get().load(image_url).error(image_id).into(mImage);
-            Picasso.get().load(image_url).error(image_id).into(mImageActive);
-        }
+        TokenIcon.load(mImage, image_id, image_url);
+        TokenIcon.load(mImageActive, image_id, image_url);
 
         setSelected(selected);
         if (code != null) {

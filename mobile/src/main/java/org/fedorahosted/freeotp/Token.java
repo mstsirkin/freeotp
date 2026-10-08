@@ -90,6 +90,11 @@ public class Token {
     @SerializedName("image")
     private final String mImage;
 
+    // null: original QR image; empty: built-in icon; otherwise an embedded PNG.
+    // Keep image unchanged for upstream compatibility and restoring the original.
+    @SerializedName("plusplusIcon")
+    private String mIconOverride;
+
     @SerializedName("color")
     private final String mColor;
 
@@ -328,6 +333,14 @@ public class Token {
 
     public String getImage() {
         return mImage;
+    }
+
+    public String getIconOverride() { return mIconOverride; }
+
+    public void setIconOverride(String icon) { mIconOverride = icon; }
+
+    public String getDisplayImage() {
+        return mIconOverride == null ? mImage : mIconOverride;
     }
 
     public String getColor() {

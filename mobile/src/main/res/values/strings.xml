@@ -198,4 +198,15 @@
         <item>Account symbol</item><item>Keyboard</item><item>Key</item><item>Star</item>
         <item>Shield</item><item>Custom emoji or symbol</item>
     </string-array>
+    <string name="icon_edit">Change account icon</string>
+    <string name="icon_website">Load website favicon</string>
+    <string name="icon_original">Use original image</string>
+    <string name="icon_default">Reset to default</string>
+    <string name="icon_website_help">Enter a website address. Its icon will be downloaded directly from the site and saved with this account.</string>
+    <string name="icon_url_hint">https://example.com</string>
+    <string name="icon_load">Load</string>
+    <string name="icon_loading">Loading favicon…</string>
+    <string name="icon_invalid_url">Enter a valid HTTP or HTTPS website address.</string>
+    <string name="icon_load_failed">Could not load a favicon. Check the address and connection. Try HTTPS or another page on the site. PNG, ICO, JPEG, and WebP images are supported.</string>
+    <string name="icon_tap_hint">Tap the icon to change it</string>
 </resources>

@@ -63,6 +63,20 @@ its issuer, account name, token type, algorithm, code length, and authentication
 requirement. TOTP accounts also show their period; HOTP accounts show the next counter.
 Viewing these properties does not generate a code or advance the counter.
 
+### Website icons
+
+Select an account, press **Edit**, and tap its icon. Choose **Load website favicon**,
+enter a website address (for example, `example.com`), and press **Load** to preview
+its icon. Press **Save** to keep the change. The app checks the website’s icon links
+and `/favicon.ico` directly; it does not use a third-party favicon service.
+Downloaded icons are saved with the account, work offline, and are included in
+FreeOTP++ backups. PNG, ICO, JPEG, and WebP images are supported; SVG is not.
+
+The original QR-provided image is kept: **Use original image** restores it.
+**Reset to default** uses the built-in issuer/token icon. Both choices take effect
+when you save. Upstream FreeOTP ignores the custom icon and retains the original
+image when restoring a FreeOTP++ backup.
+
 ### Per-account home-screen shortcuts
 
 Tap the shortcut arrow on the right of an account to create a home-screen shortcut.
