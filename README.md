@@ -1,9 +1,14 @@
-[![Build Status](https://github.com/freeotp/freeotp-android/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/freeotp/freeotp-android/actions/workflows/build.yml)
+[![Build Status](https://github.com/mstsirkin/freeotp/actions/workflows/build.yml/badge.svg?branch=freeotp-plus)](https://github.com/mstsirkin/freeotp/actions/workflows/build.yml)
 
-# FreeOTP
+# FreeOTP Plus
 
-[FreeOTP](https://freeotp.github.io) is a two-factor authentication application for systems
-utilizing one-time password protocols. Tokens can be added easily by scanning a QR code.
+FreeOTP Plus is a fork of [FreeOTP for Android](https://github.com/freeotp/freeotp-android),
+with account automation, Bluetooth keyboard sharing, and an HOTP backup fix.
+It is a two-factor authentication application for systems utilizing one-time password
+protocols. Tokens can be added easily by scanning a QR code.
+
+This fork lives at [mstsirkin/freeotp](https://github.com/mstsirkin/freeotp), on the
+`freeotp-plus` branch. It is separate from the [FreeOTP+](https://github.com/helloworld1/FreeOTPPlus) project.
 
 FreeOTP implements open standards:
 
@@ -15,7 +20,9 @@ This means that no proprietary server-side component is necessary: use any serve
 ## Screenshots
 <img src="screenshots/1.png" alt="FreeOTP screenshot 1" width="200" /> &nbsp;<img src="screenshots/2.png" alt="FreeOTP screenshot 2" width="200" /> &nbsp;<img src="screenshots/3.png" alt="FreeOTP screenshot 3" width="200" /> &nbsp;<img src="screenshots/4.png" alt="FreeOTP screenshot 4" width="200" />
 
-## Download FreeOTP for Android
+## Download upstream FreeOTP for Android
+
+These store links install upstream FreeOTP; they do not include this fork's additions.
 
 * [F-Droid](https://f-droid.org/packages/org.fedorahosted.freeotp)
 * [Google Play](https://play.google.com/store/apps/details?id=org.fedorahosted.freeotp)
@@ -31,12 +38,14 @@ Pull requests on GitHub are welcome under the Apache 2.0 license, see [CONTRIBUT
 
 ## Permissions
 
-The FreeOTP app uses the following permissions
+FreeOTP Plus uses the following permissions, depending on the features you enable:
 
 | Permission | Usage                    | Required | Permission type |
 |------------|--------------------------|----------|-----------------|
 | Camera     | Recognition of QR codes  | No       | Dangerous       |
 | Internet   | Token image provisioning | No       | Normal          |
+| Bluetooth / Nearby devices | Discover, pair, and connect sharing destinations | No | Depends on Android version |
+| Location | Bluetooth discovery on older Android versions | No | Dangerous |
 
 ## Alternatives
 
@@ -45,46 +54,106 @@ Here are some open-source alternative apps providing similar functionality:
 - [FreeOTP+](https://github.com/helloworld1/FreeOTPPlus)
 - [Proton Authenticator](https://github.com/protonpass/android-authenticator)
 
-## FreeOTP Plus Bluetooth sharing
+## Features added in this fork
 
-The share panel offers Clipboard, Jelling, and **Send as keyboard**. **Sharing settings** in the burger menu enables or disables clipboard, Jelling, and Bluetooth keyboard independently. All three sharing methods are enabled by default, with keyboard hidden on Android versions before 9. Disabled methods are not constructed and do not request their transport permissions.
+### Account information
 
-**Manage keyboard destinations** opens the device screen reused from TXT to BT: select a remembered destination, add a device by finding a visible computer or making the phone visible, and filter known accessories. Show all devices and diagnostics are in the overflow menu. Keyboard sharing launches this private foreground screen with the displayed code and sends once to the selected device; without a destination, select or pair one first. It does not regenerate a code or advance HOTP. The keyboard classes are built into FreeOTP Plus; no companion Android app is needed.
+Select one account and use the information action in the selection toolbar to view
+its issuer, account name, token type, algorithm, code length, and authentication
+requirement. TOTP accounts also show their period; HOTP accounts show the next counter.
+Viewing these properties does not generate a code or advance the counter.
 
-Keep the keyboard screen visible during sending. Numbers are normally unaffected by letter-language changes, while letters and symbols require US English with Caps Lock off. Linux must authorize keyboard access and trust the phone for incoming reconnections. Failures preserve the code for manual retry; partial sends are not retried automatically.
+### Per-account startup generation and automatic sharing
 
-The APK also includes the earlier HOTP backup-counter fix (separate commit). Physical phone/computer testing remains required for this integration. The standalone keyboard regression checks can be compiled with KeyboardCodec.java and KeyboardReports.java and run as KeyboardCodecTest / KeyboardReportsTest.
+Each account has a compact row of controls:
 
-### Direct sharing (2.0.6-plus.2)
+* **Robot:** generate a code when the app starts.
+* **Keyboard:** automatically type newly generated codes on the selected Bluetooth destination.
+* **Clipboard:** automatically copy newly generated codes.
+* **Antenna (Jelling):** automatically send newly generated codes to a Jelling receiver.
 
-When exactly one method is enabled, Share bypasses the transport chooser: clipboard copies immediately; keyboard opens its foreground session and sends to the remembered destination; Jelling immediately starts receiver discovery, automatically sending when one receiver is available after a six-second discovery window, with a receiver choice if multiple are found. No methods enabled opens Sharing settings instead of an empty chooser. The clipboard share switch is independent of the existing automatic clipboard-copy setting. Jelling does not automatically resend after a send has begun, including fragment recreation or a reported failure.
+Choose one sharing destination per account, or none. Tap the selected destination
+to clear it. A selected destination applies both when you tap the account to generate
+a code and when it generates a code at startup. The Share button reuses that destination.
+Changing these controls never generates a code or advances HOTP.
 
-### Account automation (2.0.6-plus.3)
+Manual accounts may use the same sharing destination. Among accounts enabled for
+startup generation, each destination can belong to only one account. Selecting a
+conflicting configuration keeps the latest choice and disables startup generation
+on the other account, preserving its destination and showing an explanation.
+Multiple accounts without a sharing destination may generate at startup.
 
-Sharing settings now has switches for **Generate codes on startup** and **Auto-share generated codes**. Both are off by default (the existing startup-generation preference is preserved when updating). Enabling either switch shows its checkbox and icon above every account: lightning for startup generation and an arrow for sharing. Any number of accounts can generate at startup; only one account can auto-share. Selecting a new sharing account deselects the previous one; tapping the selected checkbox clears it. Disabling a global switch hides its controls and stops that behavior while remembering selections.
+Startup generation runs once on a fresh activity launch, rather than every return
+from settings or sharing. Protected accounts still require authentication. Clipboard
+startup delivery runs first; keyboard and Jelling sessions are queued. Expired queued
+codes are discarded without generating replacements. Automatic sends are not retried.
 
-Auto-share uses the existing enabled sharing methods whenever that account actually generates a code. To send on startup, select both checkboxes for that account. One enabled method sends directly; multiple methods still show the chooser. Checkbox changes do not generate codes or advance HOTP. Protected accounts retain their normal authentication requirement. Startup runs once on a fresh activity launch, not on returning from settings or sharing; no automatic resend or retry occurs. Account selections use stable UUIDs and are cleared when the selected account is deleted.
+### Sharing settings and direct sharing
 
-### Branding and personal release (2.0.6-plus.4)
+Open **Advanced settings** from the main menu to enable or disable Clipboard,
+Jelling, and Bluetooth keyboard independently. All three are enabled by default;
+keyboard sharing requires Android 9 or later. Disabled methods do not request their
+transport permissions. A per-account destination must also be enabled here to send.
 
-All translated app-facing names, welcome screens, backup prompts and About text use FreeOTP Plus. The in-app logo carries the same plus badge as the adaptive and legacy launcher icons. Upstream attribution and links are retained.
+For accounts without a selected destination, Share uses the enabled methods:
 
-The personal release is built with `-I tools/personal-release.gradle :mobile:assembleRelease` and the original key supplied through `TXT_BT_SIGNING_KEY`. It retains the installed personal app ID (`org.fedorahosted.freeotp.debug`) and signing identity so it updates that app without clearing accounts. The release is not debuggable; the `.debug` suffix preserves installation identity. Keep release outputs in a separate checkout to preserve debug artifacts.
+* One enabled method sends directly, bypassing the chooser.
+* Multiple enabled methods show the chooser.
+* No enabled methods opens Advanced settings.
 
-### Sharing menu cleanup (2.0.6-plus.5)
+Direct Jelling sharing searches for receivers for six seconds, sends automatically
+when one is found, and offers a choice when several are found. Keep the receiver
+running on your computer. The legacy global Auto Clipboard setting is removed;
+automatic clipboard copying is now configured per account.
 
-The burger menu labels Sharing settings with a gear and navigation chevron. The legacy global Auto Clipboard entry and automatic-copy behavior are removed, including when an older installation saved that preference as enabled. Clipboard remains a sharing destination controlled in Sharing settings; per-account auto-share uses that same destination configuration.
+### Bluetooth keyboard sharing
 
-The settings entry is named Advanced settings with a right-pointing triangle; its back button uses the matching left-pointing triangle. Per-account controls have full text labels, a robot emoji for startup generation and the existing share graphic for automatic sharing, tinted for the current theme. They are stacked to remain readable on narrow screens and with larger text.
+**Send as keyboard** types the displayed code on a paired computer without a
+companion Android app. **Manage keyboard destinations** in Advanced settings lets
+you select a remembered destination or pair a new one by finding a visible computer
+or making the phone visible. The device screen also offers accessory filtering,
+Show all devices, and diagnostics.
 
-### Per-account destinations (2.0.6-plus.6)
+Sending opens a foreground keyboard screen and uses the selected destination.
+If none is selected, select or pair one first. Sharing an existing code does not
+regenerate it or advance HOTP. Keep the keyboard screen visible during sending.
 
-Every account always shows one compact row: robot (generate on startup), keyboard, clipboard, and antenna (Jelling). Select one destination or none; tap the selected destination to clear it. An account with a destination sends each newly generated code there, both on tap and on startup. The Share button reuses that destination; with none selected, it follows the enabled global sharing methods. Global transport switches and keyboard destination management remain in Advanced settings; the global startup/auto-share switches are removed.
+**Enter after keyboard send** is enabled by default for new and existing
+installations. Turn it off in Advanced settings if the receiving application should
+not submit immediately. Enter is sent only after the complete code; a failed or
+interrupted code does not send the trailing Enter. Clipboard and Jelling are unaffected.
 
-Manual accounts may share destinations. Among startup-enabled accounts, each destination belongs to one account. Enabling startup generation or changing the destination of a startup-enabled account keeps the latest configuration and disables startup generation on conflicting accounts, preserving their destinations and showing an explanatory toast. Multiple accounts with no destination may generate at startup. Checkbox changes never generate a code or advance HOTP.
+Numbers are normally unaffected by keyboard language changes; letters and symbols
+require a US English layout with Caps Lock off. Linux must authorize keyboard access
+and trust the phone for incoming reconnections. Failed sends preserve the code for
+manual retry. Check for partial input before retrying; partial sends are not retried
+automatically. Physical phone/computer testing remains required for this integration.
 
-On upgrade, previously enabled startup selections are preserved; selections hidden behind a disabled legacy global switch remain disabled. The old chooser-based automatic sharing has no explicit destination and is cleared so the user can choose one in the new row. Clipboard startup delivery runs first; keyboard and Jelling foreground sessions are queued, with expired queued codes discarded without regeneration. Physical testing remains required.
+### FreeOTP Plus branding
 
-### Enter after keyboard send (2.0.6-plus.7)
+App names, welcome screens, backup prompts, About text, and launcher and in-app
+logos identify this fork as FreeOTP Plus. Upstream attribution and links are retained.
 
-Advanced settings includes a global **Enter after keyboard send** switch, enabled by default for new and existing installations. Every keyboard send appends one Enter key press and release after the code; clipboard and Jelling are unchanged. The setting is captured when a send starts. Completion occurs only after the final Enter release, and a failed or interrupted code does not send the trailing Enter.
+## Bugfixes
+
+### HOTP backup counters stay synchronized
+
+Upstream backup metadata could retain an older HOTP counter after codes were
+generated. Restoring such a backup could restore a stale counter and produce codes
+that the server had already consumed.
+
+This fork updates backup metadata when the live HOTP counter advances and refreshes
+metadata from the current accounts before exporting a backup. Export also repairs
+stale metadata left by older versions, without changing the encrypted secrets.
+Previously exported backup files are unchanged; export a new backup to capture the
+current counters.
+
+## Personal release build
+
+The personal release is built with
+`./gradlew -I tools/personal-release.gradle :mobile:assembleRelease`, with the
+original signing key supplied through `TXT_BT_SIGNING_KEY`. It retains the personal
+app ID (`org.fedorahosted.freeotp.debug`) and signing identity so it updates that
+installation without clearing accounts. The release is not debuggable; the `.debug`
+suffix preserves installation identity. Keep release outputs in a separate checkout
+to preserve debug artifacts.
